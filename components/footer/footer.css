@@ -1,5 +1,53 @@
-.site-footer { border-top: 1px solid var(--border); }
-.footer-shell { min-height: 86px; display: flex; justify-content: space-between; align-items: center; gap: 20px; color: #777; font-size: 12px; }
-.footer-shell a { color: #aaa; }
-.footer-shell a:hover { color: #fff; }
-@media (max-width: 600px) { .footer-shell { flex-direction: column; justify-content: center; padding: 24px 0; align-items: flex-start; } }
+/* components/footer/footer.css */
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.site-footer {
+  border-top: 1px solid var(--border);
+}
+
+/* =========================================================
+   FOOTER CONTENT
+   ========================================================= */
+
+.footer-shell {
+  min-height: 86px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  color: #777;
+
+  font-size: 12px;
+}
+
+.footer-shell a {
+  color: #aaa;
+
+  transition: color .2s ease;
+}
+
+.footer-shell a:hover {
+  color: var(--text);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .footer-shell {
+    min-height: 0;
+
+    padding: 24px 0;
+
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+  }
+}

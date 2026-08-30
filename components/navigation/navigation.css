@@ -1,1 +1,149 @@
-/* Navigation intentionally owns only navigation-specific styles. Global primitives remain in css/style.css. */
+/* components/navigation/navigation.css */
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+
+  background: rgba(12, 12, 12, .86);
+
+  backdrop-filter: blur(18px);
+
+  border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+/* =========================================================
+   NAVIGATION SHELL
+   ========================================================= */
+
+.nav-shell {
+  width: min(
+    var(--content-width),
+    calc(100% - 40px)
+  );
+
+  min-height: 72px;
+
+  margin-inline: auto;
+
+  display: flex;
+  align-items: center;
+
+  gap: 34px;
+}
+
+/* =========================================================
+   BRAND
+   ========================================================= */
+
+.brand {
+  flex-shrink: 0;
+
+  font-size: 21px;
+  font-weight: 800;
+
+  letter-spacing: -.04em;
+}
+
+.brand span {
+  color: var(--faceit-orange);
+}
+
+/* =========================================================
+   NAV LINKS
+   ========================================================= */
+
+.nav-links {
+  display: flex;
+  align-items: center;
+
+  gap: 24px;
+
+  flex: 1;
+}
+
+.nav-links a {
+  color: var(--muted);
+
+  font-size: 13px;
+  font-weight: 600;
+
+  transition: color .2s ease;
+}
+
+.nav-links a:hover,
+.nav-links a[aria-current="page"] {
+  color: var(--text);
+}
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
+
+  flex-shrink: 0;
+}
+
+.nav-github {
+  font-size: 13px;
+  font-weight: 600;
+
+  transition: color .2s ease;
+}
+
+.nav-github:hover {
+  color: var(--faceit-orange);
+}
+
+/* =========================================================
+   LANGUAGE SWITCHER
+   ========================================================= */
+
+.language-switcher {
+  display: block;
+}
+
+.language-switcher select {
+  appearance: none;
+
+  border: 1px solid var(--border);
+
+  background: var(--surface);
+  color: var(--text);
+
+  border-radius: 7px;
+
+  padding: 8px 28px 8px 10px;
+
+  cursor: pointer;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .nav-shell {
+    gap: 16px;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-actions {
+    margin-left: auto;
+  }
+}
