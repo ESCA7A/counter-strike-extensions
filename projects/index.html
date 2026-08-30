@@ -13,242 +13,243 @@
 
 <body>
 
-    <header class="site-header">
+<header class="site-header">
 
-        <div class="nav-shell">
+    <div class="nav-shell">
 
-            <a
-                class="brand"
-                href="../"
-                aria-label="ESCA7A"
-            >
-                ESCA7A<span>.</span>
+        <a
+            class="brand"
+            href="../"
+            aria-label="ESCA7A"
+        >
+            ESCA7A<span>.</span>
+        </a>
+
+        <nav
+            class="nav-links"
+            aria-label="Primary navigation"
+        >
+
+            <a href="../">
+                Home
             </a>
 
-            <nav
-                class="nav-links"
-                aria-label="Primary navigation"
+            <a
+                href="./"
+                aria-current="page"
             >
+                Projects
+            </a>
 
-                <a href="../">
-                    Home
-                </a>
+            <a href="../publications/">
+                Publications
+            </a>
 
-                <a
-                    href="./"
-                    aria-current="page"
-                >
-                    Projects
-                </a>
+            <a href="../about/">
+                About
+            </a>
 
-                <a href="../publications/">
-                    Publications
-                </a>
+        </nav>
 
-                <a href="../about/">
-                    About
-                </a>
+        <div class="nav-actions">
 
-            </nav>
+            <label class="language-switcher">
 
-            <div class="nav-actions">
-
-                <label class="language-switcher">
-
-                    <span class="sr-only">
-                        Language
-                    </span>
-
-                    <select
-                        data-language
-                        aria-label="Language"
-                    >
-                        <option value="ru-RU">
-                            RU
-                        </option>
-
-                        <option value="en-US">
-                            EN
-                        </option>
-                    </select>
-
-                </label>
-
-                <a
-                    href="https://github.com/ESCA7A"
-                    target="_blank"
-                    rel="noreferrer"
-                >
-                    GitHub
-                </a>
-
-            </div>
-
-        </div>
-
-    </header>
-
-    <main
-        class="section-shell"
-        style="padding:100px 0"
-    >
-
-        <div class="eyebrow">
-            PROJECTS
-        </div>
-
-        <h1
-            style="
-                font-size:clamp(48px,7vw,84px);
-                letter-spacing:-.06em
-            "
-        >
-            Tools for CS2 & FACEIT.
-        </h1>
-
-        <div
-            id="project-list"
-            style="
-                display:grid;
-                gap:14px;
-                margin-top:40px
-            "
-        ></div>
-
-    </main>
-
-    <footer class="site-footer">
-
-        <div class="footer-shell">
-
-            <span>
-                © <span id="year">2026</span> ESCA7A —
-                <span data-footer-text>
-                    Инструменты для CS2 и FACEIT.
+                <span class="sr-only">
+                    Language
                 </span>
-            </span>
+
+                <select
+                    data-language
+                    aria-label="Language"
+                >
+                    <option value="ru-RU">
+                        RU
+                    </option>
+
+                    <option value="en-US">
+                        EN
+                    </option>
+                </select>
+
+            </label>
 
             <a
                 href="https://github.com/ESCA7A"
                 target="_blank"
                 rel="noreferrer"
             >
-                GitHub ↗
+                GitHub
             </a>
 
         </div>
 
-    </footer>
+    </div>
 
-    <script type="module">
+</header>
 
-        import {
-            getProjects,
-            getPath,
-            detectLocale
-        } from '../config/loader.js';
 
-        const languageSelect =
-            document.querySelector('[data-language]');
+<main
+    class="section-shell"
+    style="padding:120px 0"
+>
 
-        const footerText =
-            document.querySelector('[data-footer-text]');
+    <div class="eyebrow">
+        PROJECTS
+    </div>
 
-        const year =
-            document.querySelector('#year');
+    <h1
+        style="
+            font-size:clamp(48px,7vw,84px);
+            letter-spacing:-.06em;
+        "
+    >
+        Tools for CS2 & FACEIT.
+    </h1>
 
-        const root =
-            document.querySelector('#project-list');
+    <div
+        id="project-list"
+        style="
+            display:grid;
+            gap:14px;
+            margin-top:40px;
+        "
+    ></div>
 
-        function renderFooter(locale) {
+</main>
 
-            if (locale === 'ru-RU') {
-                footerText.textContent =
-                    'Инструменты для CS2 и FACEIT.';
-            } else {
-                footerText.textContent =
-                    'Tools for CS2 and FACEIT.';
-            }
 
+<footer class="site-footer">
+
+    <div class="footer-shell">
+
+        <span>
+            © <span id="year">2026</span> ESCA7A —
+            <span data-footer-text>
+                Инструменты для CS2 и FACEIT.
+            </span>
+        </span>
+
+        <a
+            href="https://github.com/ESCA7A"
+            target="_blank"
+            rel="noreferrer"
+        >
+            GitHub ↗
+        </a>
+
+    </div>
+
+</footer>
+
+
+<script type="module">
+
+    import {
+        getProjects,
+        getPath,
+        detectLocale,
+        saveLocale
+    } from '../config/loader.js';
+
+    import {
+        I18N
+    } from '../config/site.config.js';
+
+
+    const languageSelect =
+        document.querySelector('[data-language]');
+
+    const projectList =
+        document.querySelector('#project-list');
+
+    const footerText =
+        document.querySelector('[data-footer-text]');
+
+
+    function render(locale) {
+
+        const translations = I18N[locale];
+
+        if (!translations) {
+            return;
         }
 
-        function render(locale) {
+        document.documentElement.lang = locale;
 
-            const language =
-                locale.split('-')[0];
+        languageSelect.value = locale;
 
-            languageSelect.value = locale;
+        footerText.textContent =
+            translations.footer.text;
 
-            renderFooter(locale);
+        projectList.innerHTML = '';
 
-            root.innerHTML = '';
 
-            getProjects().forEach(project => {
+        getProjects().forEach(project => {
 
-                const metadata =
-                    project.meta[language] ||
-                    project.meta.en;
+            const meta =
+                project.meta[locale.split('-')[0]]
+                || project.meta.en;
 
-                root.insertAdjacentHTML(
-                    'beforeend',
-                    `
-                    <a
-                        href="${getPath(project.route)}"
+            projectList.insertAdjacentHTML(
+                'beforeend',
+                `
+                <a
+                    href="${getPath(project.route)}"
+                    style="
+                        display:block;
+                        padding:28px;
+                        border:1px solid var(--border);
+                        border-radius:8px;
+                        background:var(--surface);
+                    "
+                >
+                    <strong style="font-size:28px">
+                        ${meta.name}
+                    </strong>
+
+                    <div
                         style="
-                            display:block;
-                            padding:28px;
-                            border:1px solid var(--border);
-                            border-radius:8px;
-                            background:var(--surface)
+                            color:var(--muted);
+                            margin-top:6px;
                         "
                     >
-                        <strong style="font-size:28px">
-                            ${metadata.name}
-                        </strong>
+                        ${meta.short}
+                    </div>
+                </a>
+                `
+            );
 
-                        <div
-                            style="
-                                color:var(--muted);
-                                margin-top:6px
-                            "
-                        >
-                            ${metadata.short}
-                        </div>
-                    </a>
-                    `
-                );
+        });
 
-            });
+    }
+
+
+    const initialLocale =
+        detectLocale();
+
+    render(initialLocale);
+
+
+    languageSelect.addEventListener(
+        'change',
+        event => {
+
+            const locale =
+                event.target.value;
+
+            saveLocale(locale);
+
+            render(locale);
 
         }
+    );
 
-        const initialLocale =
-            detectLocale();
 
-        render(initialLocale);
+    document.querySelector('#year').textContent =
+        new Date().getFullYear();
 
-        languageSelect.addEventListener(
-            'change',
-            event => {
-
-                const locale =
-                    event.target.value;
-
-                localStorage.setItem(
-                    'site-locale',
-                    locale
-                );
-
-                render(locale);
-
-            }
-        );
-
-        year.textContent =
-            new Date().getFullYear();
-
-    </script>
+</script>
 
 </body>
-
 </html>
