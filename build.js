@@ -1192,6 +1192,105 @@ function projectTemplate({
 </html>`
 }
 
+function projectRedirectTemplate({
+  project,
+  targets,
+  fallback,
+}) {
+  const projectName =
+    project.meta?.[localeCode(DEFAULT_LOCALE)]?.name ||
+    project.meta?.[DEFAULT_LOCALE]?.name ||
+    project.id
+
+  return `<!doctype html>
+<html lang="${escapeHtml(DEFAULT_LOCALE)}">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    http-equiv="refresh"
+    content="0;url=${escapeHtml(fallback)}"
+  >
+
+  <title>
+    ${escapeHtml(projectName)} — ESCA7A
+  </title>
+
+</head>
+
+<body>
+
+<p>
+  Redirecting…
+</p>
+
+<script>
+const targets = ${JSON.stringify(targets)};
+const supported = Object.keys(targets);
+
+const stored = localStorage.getItem('site-locale');
+
+const browserLanguages =
+  navigator.languages?.length
+    ? navigator.languages
+    : [navigator.language];
+
+function detectLocale() {
+  if (
+    stored &&
+    supported.includes(stored)
+  ) {
+    return stored;
+  }
+
+  for (const browser of browserLanguages) {
+    const exact = supported.find(
+      locale =>
+        locale.toLowerCase() ===
+        String(browser).toLowerCase()
+    );
+
+    if (exact) {
+      return exact;
+    }
+
+    const language =
+      String(browser).split('-')[0].toLowerCase();
+
+    const partial = supported.find(
+      locale =>
+        locale.split('-')[0].toLowerCase() ===
+        language
+    );
+
+    if (partial) {
+      return partial;
+    }
+  }
+
+  return '${escapeHtml(DEFAULT_LOCALE)}';
+}
+
+const locale = detectLocale();
+
+location.replace(
+  targets[locale] ||
+  targets['${escapeHtml(DEFAULT_LOCALE)}'] ||
+  '${escapeHtml(fallback)}'
+);
+</script>
+
+</body>
+</html>`
+}
+
 async function buildProject(project) {
   if (!project.enabled) {
     return null
@@ -1202,13 +1301,6 @@ async function buildProject(project) {
   if (!(await fileExists(projectDir))) {
     return null
   }
-
-  /*
-   * index.html и config.js уже были
-   * скопированы copySiteSource().
-   *
-   * Они НЕ зависят от Markdown.
-   */
 
   const markdownFiles = await findMarkdownFiles(projectDir)
 
@@ -1246,8 +1338,19 @@ async function buildProject(project) {
 
     const outputDir =
       relativeDir === "."
-        ? path.join(DIST_DIR, "projects", project.id, locale)
-        : path.join(DIST_DIR, "projects", project.id, relativeDir, locale)
+        ? path.join(
+            DIST_DIR,
+            "projects",
+            project.id,
+            locale
+          )
+        : path.join(
+            DIST_DIR,
+            "projects",
+            project.id,
+            relativeDir,
+            locale
+          )
 
     await ensureDir(outputDir)
 
@@ -1264,17 +1367,59 @@ async function buildProject(project) {
     pages.push({
       source: relativePath,
       locale,
-      url: projectMarkdownUrl(project.id, relativePath, locale),
+      url: projectMarkdownUrl(
+        project.id,
+        relativePath,
+        locale
+      ),
     })
   }
 
   /*
-   * Если Markdown отсутствует —
-   * это НЕ ошибка.
+   * Создаём входную страницу проекта.
    *
-   * Проект продолжает существовать
-   * благодаря собственному index.html.
+   * /projects/<project>/
+   *
+   * определяет язык и отправляет пользователя
+   * в соответствующую локализованную документацию.
    */
+
+  const availableLocales = [
+    ...new Set(
+      pages.map((page) => page.locale)
+    ),
+  ]
+
+  if (availableLocales.length) {
+    const targets = Object.fromEntries(
+      availableLocales.map((locale) => [
+        locale,
+        `${BASE_PATH}/projects/${project.id}/${locale}/`,
+      ])
+    )
+
+    const fallback =
+      targets[DEFAULT_LOCALE] ||
+      Object.values(targets)[0]
+
+    const projectRoot =
+      path.join(
+        DIST_DIR,
+        "projects",
+        project.id
+      )
+
+    await ensureDir(projectRoot)
+
+    await fs.writeFile(
+      path.join(projectRoot, "index.html"),
+      projectRedirectTemplate({
+        project,
+        targets,
+        fallback,
+      })
+    )
+  }
 
   return {
     id: project.id,
