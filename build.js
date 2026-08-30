@@ -46,6 +46,42 @@ async function copy(source, destination) {
   })
 }
 
+async function readTemplate(filePath) {
+  if (!(await fileExists(filePath))) {
+    throw new Error(`Template not found: ${filePath}`)
+  }
+
+  return fs.readFile(filePath, "utf8")
+}
+
+function renderTemplate(template, {
+  locale,
+  metadata = {},
+  content = "",
+  replacements = {},
+}) {
+  let html = template
+
+  const values = {
+    locale,
+    title: metadata.title || "",
+    description: metadata.description || "",
+    content,
+    ...replacements,
+  }
+
+  for (const [key, value] of Object.entries(values)) {
+    const marker = `{{${key}}}`
+
+    html = html.replaceAll(
+      marker,
+      String(value ?? "")
+    )
+  }
+
+  return html
+}
+
 async function fileExists(filePath) {
   try {
     await fs.access(filePath)
@@ -275,138 +311,6 @@ async function cleanProjectOutput(project) {
 /* -------------------------------------------------------------------------- */
 /* PUBLICATIONS                                                               */
 /* -------------------------------------------------------------------------- */
-
-function publicationTemplate({
-  locale,
-  metadata,
-  html,
-  slug,
-  availableLocales,
-}) {
-  const ru = isRu(locale)
-
-  const title = metadata.title || slug
-
-  const description = metadata.description || ""
-
-  const languageLinks = availableLocales
-    .map(
-      (item) => `
-        <a
-          class="publication-language${item === locale ? " active" : ""}"
-          href="${BASE_PATH}/publications/${encodeURIComponent(slug)}/${item}/"
-          ${item === locale ? 'aria-current="page"' : ""}
-        >
-          ${localeLabel(item)}
-        </a>
-      `
-    )
-    .join("")
-
-  return `<!doctype html>
-<html lang="${escapeHtml(locale)}">
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <meta
-    name="description"
-    content="${escapeHtml(description)}"
-  >
-
-  <title>${escapeHtml(title)} — ESCA7A</title>
-
-  <link
-    rel="stylesheet"
-    href="${BASE_PATH}/css/style.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="${PUBLICATION_CSS}"
-  >
-</head>
-
-<body>
-
-<header class="site-header publication-header">
-
-  <div class="publication-nav">
-
-    <a
-      class="brand"
-      href="${BASE_PATH}/"
-    >
-      ESCA7A<span>.</span>
-    </a>
-
-    <a href="${BASE_PATH}/publications/">
-      ← ${ru ? "Публикации" : "Publications"}
-    </a>
-
-    <div
-      class="publication-languages"
-      aria-label="${ru ? "Язык" : "Language"}"
-    >
-      ${languageLinks}
-    </div>
-
-  </div>
-
-</header>
-
-<main class="publication-page section-shell">
-
-  <article class="publication-content">
-
-    <header class="publication-title">
-
-      <div class="section-kicker">
-        ${ru ? "ПУБЛИКАЦИЯ" : "PUBLICATION"}
-      </div>
-
-      <h1>
-        ${escapeHtml(title)}
-      </h1>
-
-      ${
-        description
-          ? `<p class="publication-description">
-              ${escapeHtml(description)}
-            </p>`
-          : ""
-      }
-
-      ${
-        metadata.date
-          ? `<time datetime="${escapeHtml(metadata.date)}">
-              ${escapeHtml(metadata.date)}
-            </time>`
-          : ""
-      }
-
-    </header>
-
-    <div class="publication-body">
-      ${html}
-    </div>
-
-  </article>
-
-</main>
-
-<footer class="site-footer publication-footer">
-
-  <div class="footer-shell">
-    © ${new Date().getFullYear()} ESCA7A
-  </div>
-
-</footer>
-
-</body>
-</html>`
-}
 
 async function findPublicationDirectories() {
   const entries = await fs.readdir(PUBLICATIONS_DIR, { withFileTypes: true })
@@ -1118,161 +1022,7 @@ location.replace(
 /* PROJECTS                                                                   */
 /* -------------------------------------------------------------------------- */
 
-function projectTemplate({
-  locale,
-  project,
-  metadata,
-  html,
-}) {
-  const ru = isRu(locale)
 
-  const projectMeta =
-    project.meta?.[localeCode(locale)] ||
-    project.meta?.[locale] ||
-    project.meta?.[localeCode(DEFAULT_LOCALE)] ||
-    project.meta?.[DEFAULT_LOCALE] ||
-    {}
-
-  const title =
-    metadata.title ||
-    projectMeta.name ||
-    project.id
-
-  const description =
-    metadata.description ||
-    projectMeta.description ||
-    projectMeta.short ||
-    ""
-
-  const projectType = project.type || ""
-
-  return `<!doctype html>
-<html lang="${escapeHtml(locale)}">
-
-<head>
-
-  <meta charset="utf-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
-
-  <meta
-    name="description"
-    content="${escapeHtml(description)}"
-  >
-
-  <title>
-    ${escapeHtml(title)} — ${escapeHtml(projectMeta.name || project.id)} — ESCA7A
-  </title>
-
-  <link
-    rel="stylesheet"
-    href="${BASE_PATH}/css/style.css"
-  >
-
-  <link
-    rel="stylesheet"
-    href="${BASE_PATH}/components/projects/projects.css"
-  >
-
-</head>
-
-<body>
-
-<header class="site-header">
-
-  <div class="nav-shell">
-
-    <a
-      class="brand"
-      href="${BASE_PATH}/"
-      aria-label="ESCA7A"
-    >
-      ESCA7A<span>.</span>
-    </a>
-
-    <nav
-      class="nav-links"
-      aria-label="${ru ? "Навигация" : "Navigation"}"
-    >
-
-      ${siteNavigation({
-        locale,
-        active: "projects",
-      })}
-
-    </nav>
-
-    <a
-      href="${BASE_PATH}/projects/"
-    >
-      ← ${ru ? "Проекты" : "Projects"}
-    </a>
-
-  </div>
-
-</header>
-
-<main class="project-page section-shell">
-
-  <header class="project-header">
-
-    ${
-      projectType
-        ? `<div class="section-kicker">
-            ${escapeHtml(projectType.replace(/-/g, " ").toUpperCase())}
-          </div>`
-        : ""
-    }
-
-    <h1>
-      ${escapeHtml(title)}
-    </h1>
-
-    ${
-      description
-        ? `<p class="project-description">
-            ${escapeHtml(description)}
-          </p>`
-        : ""
-    }
-
-  </header>
-
-  <article class="project-content">
-
-    ${html}
-
-  </article>
-
-</main>
-
-<footer class="site-footer">
-
-  <div class="footer-shell">
-
-    <span>
-      © ${new Date().getFullYear()} ESCA7A —
-      ${ru ? "Инструменты для CS2 и FACEIT." : "Tools for CS2 and FACEIT."}
-    </span>
-
-    <a
-      href="${escapeHtml(SITE_CONFIG.social.github)}"
-      target="_blank"
-      rel="noreferrer"
-    >
-      GitHub ↗
-    </a>
-
-  </div>
-
-</footer>
-
-</body>
-</html>`
-}
 
 function projectRedirectTemplate({
   project,
@@ -1436,14 +1186,22 @@ async function buildProject(project) {
 
     await ensureDir(outputDir)
 
+    const templatePath = path.join(
+      projectDir,
+      "index.html"
+    )
+
+    const template = await readTemplate(templatePath)
+
+    const rendered = renderTemplate(template, {
+      locale,
+      metadata: parsed.data,
+      content: html,
+    })
+
     await fs.writeFile(
       path.join(outputDir, "index.html"),
-      projectTemplate({
-        locale,
-        project,
-        metadata: parsed.data,
-        html,
-      })
+      rendered
     )
 
     pages.push({

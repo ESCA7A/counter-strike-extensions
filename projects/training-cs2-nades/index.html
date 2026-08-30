@@ -1,23 +1,147 @@
-<div class="eyebrow">
-    LEARNING LIBRARY
-</div>
+<!doctype html>
+<html lang="{{locale}}">
 
-<h1
-    style="
-        font-size:clamp(54px,8vw,96px);
-        letter-spacing:-.07em;
-        margin:12px 0;
-    "
->
-    CS2 Nades
-</h1>
+<head>
 
-<p
-    style="
-        max-width:620px;
-        color:var(--muted);
-        font-size:18px;
-    "
->
-    A practical library for learning grenades and lineups in Counter-Strike 2.
-</p>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+
+    <title>{{title}} — ESCA7A</title>
+
+    <link
+        rel="stylesheet"
+        href="../../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../../components/navigation/navigation.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../../components/projects/projects.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../../components/footer/footer.css"
+    >
+
+</head>
+
+<body>
+
+<header class="site-header">
+
+    <div class="nav-shell">
+
+        <a
+            class="brand"
+            href="../../"
+        >
+            ESCA7A<span>.</span>
+        </a>
+
+        <nav
+            class="nav-links"
+            aria-label="Primary navigation"
+        >
+
+            <a href="../../">
+                Home
+            </a>
+
+            <a
+                href="../../projects/"
+                aria-current="page"
+            >
+                Projects
+            </a>
+
+            <a href="../../publications/">
+                Publications
+            </a>
+
+            <a href="../../about/">
+                About
+            </a>
+
+        </nav>
+
+        <div class="nav-actions">
+
+            <a
+                class="nav-github"
+                href="https://github.com/ESCA7A"
+                target="_blank"
+                rel="noreferrer"
+            >
+                GitHub
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+<main class="section-shell project-page">
+
+    <header class="project-header">
+
+        <div class="section-kicker">
+            LEARNING LIBRARY
+        </div>
+
+        <h1>
+            {{title}}
+        </h1>
+
+        <p class="project-description">
+            {{description}}
+        </p>
+
+    </header>
+
+    <article class="project-content">
+
+        {{content}}
+
+    </article>
+
+</main>
+
+<footer class="site-footer">
+
+    <div class="footer-shell">
+
+        <span>
+            © <span id="year"></span> ESCA7A —
+            Tools for CS2 and FACEIT.
+        </span>
+
+        <a
+            href="https://github.com/ESCA7A"
+            target="_blank"
+            rel="noreferrer"
+        >
+            GitHub ↗
+        </a>
+
+    </div>
+
+</footer>
+
+<script>
+    document.querySelector("#year").textContent =
+        new Date().getFullYear()
+</script>
+
+</body>
+
+</html>

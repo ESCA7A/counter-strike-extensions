@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ru-RU">
+<html lang="{{locale}}">
 
 <head>
     <meta charset="utf-8">
@@ -8,7 +8,9 @@
     <title>Projects — ESCA7A</title>
 
     <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../components/navigation/navigation.css">
     <link rel="stylesheet" href="../components/projects/projects.css">
+    <link rel="stylesheet" href="../components/footer/footer.css">
 </head>
 
 <body>
@@ -17,27 +19,17 @@
 
     <div class="nav-shell">
 
-        <a
-            class="brand"
-            href="../"
-            aria-label="ESCA7A"
-        >
+        <a class="brand" href="../">
             ESCA7A<span>.</span>
         </a>
 
-        <nav
-            class="nav-links"
-            aria-label="Primary navigation"
-        >
+        <nav class="nav-links" aria-label="Primary navigation">
 
             <a href="../">
                 Home
             </a>
 
-            <a
-                href="./"
-                aria-current="page"
-            >
+            <a href="./" aria-current="page">
                 Projects
             </a>
 
@@ -53,28 +45,8 @@
 
         <div class="nav-actions">
 
-            <label class="language-switcher">
-
-                <span class="sr-only">
-                    Language
-                </span>
-
-                <select
-                    data-language
-                    aria-label="Language"
-                >
-                    <option value="ru-RU">
-                        RU
-                    </option>
-
-                    <option value="en-US">
-                        EN
-                    </option>
-                </select>
-
-            </label>
-
             <a
+                class="nav-github"
                 href="https://github.com/ESCA7A"
                 target="_blank"
                 rel="noreferrer"
@@ -88,46 +60,29 @@
 
 </header>
 
+<main class="section-shell projects-page">
 
-<main
-    class="section-shell"
-    style="padding:120px 0"
->
-
-    <div class="eyebrow">
+    <div class="section-kicker">
         PROJECTS
     </div>
 
-    <h1
-        style="
-            font-size:clamp(48px,7vw,84px);
-            letter-spacing:-.06em;
-        "
-    >
+    <h1>
         Tools for CS2 & FACEIT.
     </h1>
 
-    <div
-        id="project-list"
-        style="
-            display:grid;
-            gap:14px;
-            margin-top:40px;
-        "
-    ></div>
+    <div id="project-list">
+        <!-- PROJECTS -->
+    </div>
 
 </main>
-
 
 <footer class="site-footer">
 
     <div class="footer-shell">
 
         <span>
-            © <span id="year">2026</span> ESCA7A —
-            <span data-footer-text>
-                Инструменты для CS2 и FACEIT.
-            </span>
+            © <span id="year"></span> ESCA7A —
+            Tools for CS2 and FACEIT.
         </span>
 
         <a
@@ -142,114 +97,11 @@
 
 </footer>
 
-
-<script type="module">
-
-    import {
-        getProjects,
-        getPath,
-        detectLocale,
-        saveLocale
-    } from '../config/loader.js';
-
-    import {
-        I18N
-    } from '../config/site.config.js';
-
-
-    const languageSelect =
-        document.querySelector('[data-language]');
-
-    const projectList =
-        document.querySelector('#project-list');
-
-    const footerText =
-        document.querySelector('[data-footer-text]');
-
-
-    function render(locale) {
-
-        const translations = I18N[locale];
-
-        if (!translations) {
-            return;
-        }
-
-        document.documentElement.lang = locale;
-
-        languageSelect.value = locale;
-
-        footerText.textContent =
-            translations.footer.text;
-
-        projectList.innerHTML = '';
-
-
-        getProjects().forEach(project => {
-
-            const meta =
-                project.meta[locale.split('-')[0]]
-                || project.meta.en;
-
-            projectList.insertAdjacentHTML(
-                'beforeend',
-                `
-                <a
-                    href="${getPath(project.route)}"
-                    style="
-                        display:block;
-                        padding:28px;
-                        border:1px solid var(--border);
-                        border-radius:8px;
-                        background:var(--surface);
-                    "
-                >
-                    <strong style="font-size:28px">
-                        ${meta.name}
-                    </strong>
-
-                    <div
-                        style="
-                            color:var(--muted);
-                            margin-top:6px;
-                        "
-                    >
-                        ${meta.short}
-                    </div>
-                </a>
-                `
-            );
-
-        });
-
-    }
-
-
-    const initialLocale =
-        detectLocale();
-
-    render(initialLocale);
-
-
-    languageSelect.addEventListener(
-        'change',
-        event => {
-
-            const locale =
-                event.target.value;
-
-            saveLocale(locale);
-
-            render(locale);
-
-        }
-    );
-
-
-    document.querySelector('#year').textContent =
-        new Date().getFullYear();
-
+<script>
+    document.querySelector("#year").textContent =
+        new Date().getFullYear()
 </script>
 
 </body>
+
 </html>
