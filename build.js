@@ -852,27 +852,17 @@ function projectTemplate({
 </html>`;
 }
 
-function projectNavigation({
-  locale,
-  project
-}) {
-  const isRu = localeCode(locale) === 'ru';
-
-  const projectName =
-    project.meta?.[localeCode(locale)]?.name ||
-    project.id;
-
+function projectNavigation({ locale, project }) {
   return `
-    <a href="${BASE_PATH}/" data-nav="home">
-      ${isRu ? 'Главная' : 'Home'}
-    </a>
-
-    <a href="${BASE_PATH}/projects/" data-nav="projects">
-      ${isRu ? 'Проекты' : 'Projects'}
-    </a>
+    ${siteNavigation({
+      locale,
+      active: 'projects'
+    })}
 
     <a href="${project.route}" data-nav="project" aria-current="page">
-      ${escapeHtml(projectName)}
+      ${escapeHtml(
+        project.meta?.[localeCode(locale)]?.name || project.id
+      )}
     </a>
   `;
 }
@@ -1150,6 +1140,34 @@ async function buildProjects() {
   }
 
   return projects;
+}
+
+function siteNavigation({ locale, active }) {
+  const isRu = localeCode(locale) === 'ru';
+
+  return `
+    <a href="${BASE_PATH}/" data-nav="home" ${active === 'home' ? 'aria-current="page"' : ''}>
+      ${isRu ? 'Главная' : 'Home'}
+    </a>
+
+    ${SITE_CONFIG.navigation.showProjects
+      ? `<a href="${BASE_PATH}/projects/" data-nav="projects" ${active === 'projects' ? 'aria-current="page"' : ''}>
+          ${isRu ? 'Проекты' : 'Projects'}
+        </a>`
+      : ''}
+
+    ${SITE_CONFIG.navigation.showPublications
+      ? `<a href="${BASE_PATH}/publications/" data-nav="publications" ${active === 'publications' ? 'aria-current="page"' : ''}>
+          ${isRu ? 'Публикации' : 'Publications'}
+        </a>`
+      : ''}
+
+    ${SITE_CONFIG.navigation.showAbout
+      ? `<a href="${BASE_PATH}/about/" data-nav="about" ${active === 'about' ? 'aria-current="page"' : ''}>
+          ${isRu ? 'Обо мне' : 'About'}
+        </a>`
+      : ''}
+  `;
 }
 
 async function main() {
