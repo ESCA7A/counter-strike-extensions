@@ -13,7 +13,14 @@
    ========================================================= */
 
 .footer-shell {
+  width: min(
+    var(--content-width),
+    calc(100% - 40px)
+  );
+
   min-height: 86px;
+
+  margin-inline: auto;
 
   display: flex;
   align-items: center;
