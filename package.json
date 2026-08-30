@@ -8,5 +8,9 @@
   },
   "dependencies": {
     "marked": "^15.0.12"
+  },
+  "devDependencies": {
+    "gray-matter": "^4.0.3",
+    "handlebars": "^4.7.9"
   }
 }

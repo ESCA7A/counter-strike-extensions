@@ -3,14 +3,33 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
 
-    <title>Projects — ESCA7A</title>
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
 
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../components/navigation/navigation.css">
-    <link rel="stylesheet" href="../components/projects/projects.css">
-    <link rel="stylesheet" href="../components/footer/footer.css">
+    <title>{{title}} — ESCA7A</title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../components/navigation/navigation.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../components/projects/projects.css"
+    >
+
+    <link
+        rel="stylesheet"
+        href="../components/footer/footer.css"
+    >
 </head>
 
 <body>
@@ -19,17 +38,26 @@
 
     <div class="nav-shell">
 
-        <a class="brand" href="../">
+        <a
+            class="brand"
+            href="../"
+        >
             ESCA7A<span>.</span>
         </a>
 
-        <nav class="nav-links" aria-label="Primary navigation">
+        <nav
+            class="nav-links"
+            aria-label="Primary navigation"
+        >
 
             <a href="../">
                 Home
             </a>
 
-            <a href="./" aria-current="page">
+            <a
+                href="./"
+                aria-current="page"
+            >
                 Projects
             </a>
 
@@ -63,15 +91,15 @@
 <main class="section-shell projects-page">
 
     <div class="section-kicker">
-        PROJECTS
+        {{sectionKicker}}
     </div>
 
     <h1>
-        Tools for CS2 & FACEIT.
+        {{title}}
     </h1>
 
     <div id="project-list">
-        <!-- PROJECTS -->
+        {{projects}}
     </div>
 
 </main>

@@ -63,7 +63,7 @@ for dir in "${DIRS[@]}"; do
     fi
 
     # Имя результирующего файла (например, dirname1.js)
-    output_file="$(basename "$clean_dir").js"
+    output_file="merges/$(basename "$clean_dir").txt"
     
     # Очищаем или создаем пустой файл перед записью
     > "$output_file"
