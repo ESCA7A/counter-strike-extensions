@@ -1,0 +1,201 @@
+diff --git a/build.js b/build.js
+index a235b97..3103772 100644
+--- a/build.js
++++ b/build.js
+@@ -141,48 +141,172 @@ function publicationListTemplate({ locale, publications }) {
+   const description = isRu
+     ? 'Статьи, заметки и разборы о Counter-Strike 2, FACEIT и соревновательной игре.'
+     : 'Articles, notes and reviews about Counter-Strike 2, FACEIT and competitive gaming.';
++
+   const cards = publications.map(item => {
+-    const metadata = item.metadataByLocale[locale] || item.metadataByLocale[DEFAULT_LOCALE] || {};
+-    return `<a class="publication-card" href="${BASE_PATH}/publications/${encodeURIComponent(item.slug)}/">
+-      <div class="publication-card-meta"><span>${escapeHtml(metadata.category || 'CS2')}</span>${metadata.date ? `<time>${escapeHtml(metadata.date)}</time>` : ''}</div>
+-      <h2>${escapeHtml(metadata.title || item.slug)}</h2>
+-      ${metadata.description ? `<p>${escapeHtml(metadata.description)}</p>` : ''}
+-      <span class="publication-card-link">${isRu ? 'Читать' : 'Read'} <b>↗</b></span>
+-    </a>`;
++    const metadata =
++      item.metadataByLocale[locale] ||
++      item.metadataByLocale[DEFAULT_LOCALE] ||
++      {};
++
++    return `
++      <a class="publication-card" href="${BASE_PATH}/publications/${encodeURIComponent(item.slug)}/">
++        <div class="publication-card-meta">
++          <span>${escapeHtml(metadata.category || 'CS2')}</span>
++          ${metadata.date ? `<time>${escapeHtml(metadata.date)}</time>` : ''}
++        </div>
++
++        <h2>${escapeHtml(metadata.title || item.slug)}</h2>
++
++        ${metadata.description
++          ? `<p>${escapeHtml(metadata.description)}</p>`
++          : ''}
++
++        <span class="publication-card-link">
++          ${isRu ? 'Читать' : 'Read'} <b>↗</b>
++        </span>
++      </a>
++    `;
+   }).join('');
+ 
++  const navigationLinks = `
++    <a href="${BASE_PATH}/" data-nav="home">
++      ${isRu ? 'Главная' : 'Home'}
++    </a>
++
++    ${SITE_CONFIG.navigation.showProjects
++      ? `<a href="${BASE_PATH}/projects/" data-nav="projects">
++          ${isRu ? 'Проекты' : 'Projects'}
++        </a>`
++      : ''}
++
++    ${SITE_CONFIG.navigation.showPublications
++      ? `<a href="${BASE_PATH}/publications/" data-nav="publications" aria-current="page">
++          ${isRu ? 'Публикации' : 'Publications'}
++        </a>`
++      : ''}
++
++    ${SITE_CONFIG.navigation.showAbout
++      ? `<a href="${BASE_PATH}/about/" data-nav="about">
++          ${isRu ? 'Обо мне' : 'About'}
++        </a>`
++      : ''}
++  `;
++
++  const languageSwitcher = SITE_CONFIG.navigation.showLanguageSwitcher
++    ? `
++      <label class="language-switcher">
++        <span class="sr-only">
++          ${isRu ? 'Язык' : 'Language'}
++        </span>
++
++        <select data-language aria-label="${isRu ? 'Язык' : 'Language'}">
++          ${LOCALES.map(item => `
++            <option value="${escapeHtml(item)}" ${item === locale ? 'selected' : ''}>
++              ${localeLabel(item)}
++            </option>
++          `).join('')}
++        </select>
++      </label>
++    `
++    : '';
++
++  const footerGithub = SITE_CONFIG.social.github;
++
+   return `<!doctype html>
+ <html lang="${escapeHtml(locale)}">
+ <head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+-  <meta name="description" content="${escapeHtml(description)}">
+-  <title>${title} — ESCA7A</title>
+-<link rel="stylesheet" href="${BASE_PATH}/css/style.css">
+-<link rel="stylesheet" href="${BASE_PATH}/components/navigation/navigation.css">
+-<link rel="stylesheet" href="${BASE_PATH}/components/publications/publications.css">
++  <meta
++    name="description"
++    content="${escapeHtml(description)}"
++  >
++  <title>${escapeHtml(title)} — ESCA7A</title>
++
++  <link rel="stylesheet" href="${BASE_PATH}/css/style.css">
++  <link rel="stylesheet" href="${BASE_PATH}/components/navigation/navigation.css">
++  <link rel="stylesheet" href="${BASE_PATH}/components/publications/publications.css">
++  <link rel="stylesheet" href="${BASE_PATH}/components/footer/footer.css">
+ </head>
++
+ <body>
+-<header class="site-header publication-header">
+-  <div class="publication-nav">
+-    <a class="brand" href="${BASE_PATH}/">ESCA7A<span>.</span></a>
+-    <a href="${BASE_PATH}/">← ${isRu ? 'Главная' : 'Home'}</a>
+-    <div class="publication-languages" aria-label="Language">
+-      ${LOCALES.map(item => `<a class="publication-language${item === locale ? '" aria-current="page' : ''}" href="${BASE_PATH}/publications/${item}/">${localeLabel(item)}</a>`).join('')}
++<header class="site-header">
++  <div class="nav-shell">
++
++    <a
++      class="brand"
++      href="${BASE_PATH}/"
++      aria-label="ESCA7A"
++    >
++      ESCA7A<span>.</span>
++    </a>
++
++    <nav class="nav-links" aria-label="${isRu ? 'Основная навигация' : 'Primary'}">
++      ${navigationLinks}
++    </nav>
++
++    <div class="nav-actions">
++      ${languageSwitcher}
++
++      <a
++        class="nav-github"
++        href="${escapeHtml(SITE_CONFIG.social.github)}"
++        target="_blank"
++        rel="noreferrer"
++      >
++        GitHub
++      </a>
+     </div>
++
+   </div>
+ </header>
++
+ <main class="publications-page section-shell">
++
+   <section class="publications-intro">
+-    <div class="section-kicker">${isRu ? 'ПУБЛИКАЦИИ' : 'PUBLICATIONS'}</div>
+-    <h1>${title}</h1>
+-    <p>${description}</p>
++    <div class="section-kicker">
++      ${isRu ? 'ПУБЛИКАЦИИ' : 'PUBLICATIONS'}
++    </div>
++
++    <h1>${escapeHtml(title)}</h1>
++
++    <p>${escapeHtml(description)}</p>
+   </section>
+-  <section class="publications-grid">${cards || `<div class="publications-empty"><span>${isRu ? 'ПОКА ПУСТО' : 'COMING SOON'}</span></div>`}</section>
++
++  <section class="publications-grid">
++    ${
++      cards ||
++      `
++        <div class="publications-empty">
++          <span>${isRu ? 'ПОКА ПУСТО' : 'COMING SOON'}</span>
++        </div>
++      `
++    }
++  </section>
++
+ </main>
+-<footer class="site-footer publication-footer">
+-  <div class="footer-shell">© ${new Date().getFullYear()} ESCA7A</div>
++
++<footer class="site-footer">
++  <div class="footer-shell">
++
++    <span>
++      © ${new Date().getFullYear()} ESCA7A —
++      ${isRu
++        ? 'Инструменты для CS2 и FACEIT.'
++        : 'Tools for CS2 and FACEIT.'}
++    </span>
++
++    <a
++      href="${escapeHtml(footerGithub)}"
++      target="_blank"
++      rel="noreferrer"
++    >
++      GitHub ↗
++    </a>
++
++  </div>
+ </footer>
++
+ </body>
+ </html>`;
+ }
