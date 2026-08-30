@@ -1,0 +1,5 @@
+.site-footer { border-top: 1px solid var(--border); }
+.footer-shell { min-height: 86px; display: flex; justify-content: space-between; align-items: center; gap: 20px; color: #777; font-size: 12px; }
+.footer-shell a { color: #aaa; }
+.footer-shell a:hover { color: #fff; }
+@media (max-width: 600px) { .footer-shell { flex-direction: column; justify-content: center; padding: 24px 0; align-items: flex-start; } }
