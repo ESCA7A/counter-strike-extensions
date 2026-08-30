@@ -777,26 +777,108 @@ async function buildPublications() {
   return publications
 }
 
-async function buildPublicationRedirect({ publications }) {
-  const targets = Object.fromEntries(
-    LOCALES.map((locale) => [locale, `${BASE_PATH}/publications/${locale}/`])
+async function buildPublicationRedirect({
+  publications
+}) {
+  const outputDir = path.join(
+    DIST_DIR,
+    "publications"
   )
-
-  const outputDir = path.join(DIST_DIR, "publications")
 
   await ensureDir(outputDir)
 
-  const fallback = targets[DEFAULT_LOCALE] || Object.values(targets)[0]
+  /*
+   * Общий redirect:
+   *
+   * /publications/
+   *      ↓
+   * /publications/ru-RU/
+   * или
+   * /publications/en-US/
+   */
+  const targets = Object.fromEntries(
+    LOCALES.map(
+      (locale) => [
+        locale,
+        `${BASE_PATH}/publications/${locale}/`
+      ]
+    )
+  )
+
+  const fallback =
+    targets[DEFAULT_LOCALE] ||
+    Object.values(targets)[0]
 
   await fs.writeFile(
-    path.join(outputDir, "index.html"),
+    path.join(
+      outputDir,
+      "index.html"
+    ),
     redirectTemplate({
       targets,
       fallback,
-      title: "Publications",
+      title: "Publications"
     })
   )
+
+  /*
+   * Redirect для каждой отдельной публикации:
+   *
+   * /publications/grenades-and-tools/
+   *      ↓
+   * /publications/grenades-and-tools/ru-RU/
+   *
+   * При этом язык выбирается так же,
+   * как на остальных страницах сайта.
+   */
+  for (const publication of publications) {
+    const publicationDir = path.join(
+      outputDir,
+      publication.slug
+    )
+
+    await ensureDir(publicationDir)
+
+    const availableLocales =
+      publication.availableLocales
+
+    const publicationTargets =
+      Object.fromEntries(
+        availableLocales.map(
+          (locale) => [
+            locale,
+            `${BASE_PATH}/publications/${encodeURIComponent(
+              publication.slug
+            )}/${locale}/`
+          ]
+        )
+      )
+
+    const publicationFallback =
+      publicationTargets[DEFAULT_LOCALE] ||
+      publicationTargets[availableLocales[0]]
+
+    await fs.writeFile(
+      path.join(
+        publicationDir,
+        "index.html"
+      ),
+      redirectTemplate({
+        targets: publicationTargets,
+        fallback: publicationFallback,
+        title:
+          publication.metadataByLocale[
+            DEFAULT_LOCALE
+          ]?.title ||
+          publication.metadataByLocale[
+            availableLocales[0]
+          ]?.title ||
+          publication.slug
+      })
+    )
+  }
 }
+
 
 /* -------------------------------------------------------------------------- */
 /* PROJECT DOCUMENTATION                                                       */
