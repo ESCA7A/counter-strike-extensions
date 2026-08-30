@@ -4,22 +4,251 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
+
     <title>Projects — ESCA7A</title>
+
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../components/projects/projects.css">
 </head>
 
 <body>
+
     <header class="site-header">
-        <div class="nav-shell"><a class="brand" href="../">ESCA7A<span>.</span></a><a href="../">← Home</a></div>
+
+        <div class="nav-shell">
+
+            <a
+                class="brand"
+                href="../"
+                aria-label="ESCA7A"
+            >
+                ESCA7A<span>.</span>
+            </a>
+
+            <nav
+                class="nav-links"
+                aria-label="Primary navigation"
+            >
+
+                <a href="../">
+                    Home
+                </a>
+
+                <a
+                    href="./"
+                    aria-current="page"
+                >
+                    Projects
+                </a>
+
+                <a href="../publications/">
+                    Publications
+                </a>
+
+                <a href="../about/">
+                    About
+                </a>
+
+            </nav>
+
+            <div class="nav-actions">
+
+                <label class="language-switcher">
+
+                    <span class="sr-only">
+                        Language
+                    </span>
+
+                    <select
+                        data-language
+                        aria-label="Language"
+                    >
+                        <option value="ru-RU">
+                            RU
+                        </option>
+
+                        <option value="en-US">
+                            EN
+                        </option>
+                    </select>
+
+                </label>
+
+                <a
+                    href="https://github.com/ESCA7A"
+                    target="_blank"
+                    rel="noreferrer"
+                >
+                    GitHub
+                </a>
+
+            </div>
+
+        </div>
+
     </header>
-    <main class="section-shell" style="padding:100px 0">
-        <div class="eyebrow">PROJECTS</div>
-        <h1 style="font-size:clamp(48px,7vw,84px);letter-spacing:-.06em">Tools for CS2 & FACEIT.</h1>
-        <div id="project-list" style="display:grid;gap:14px;margin-top:40px"></div>
+
+    <main
+        class="section-shell"
+        style="padding:100px 0"
+    >
+
+        <div class="eyebrow">
+            PROJECTS
+        </div>
+
+        <h1
+            style="
+                font-size:clamp(48px,7vw,84px);
+                letter-spacing:-.06em
+            "
+        >
+            Tools for CS2 & FACEIT.
+        </h1>
+
+        <div
+            id="project-list"
+            style="
+                display:grid;
+                gap:14px;
+                margin-top:40px
+            "
+        ></div>
+
     </main>
-    <script
-        type="module">import {getProjects, getPath, detectLocale} from '../config/loader.js'; const locale = detectLocale(); const root = document.querySelector('#project-list'); getProjects().forEach(p => {const m = p.meta[locale.split('-')[0]] || p.meta.en; root.insertAdjacentHTML('beforeend', `<a href="${getPath(p.route)}" style="display:block;padding:28px;border:1px solid var(--border);border-radius:8px;background:var(--surface)"><strong style="font-size:28px">${m.name}</strong><div style="color:var(--muted);margin-top:6px">${m.short}</div></a>`)});</script>
+
+    <footer class="site-footer">
+
+        <div class="footer-shell">
+
+            <span>
+                © <span id="year">2026</span> ESCA7A —
+                <span data-footer-text>
+                    Инструменты для CS2 и FACEIT.
+                </span>
+            </span>
+
+            <a
+                href="https://github.com/ESCA7A"
+                target="_blank"
+                rel="noreferrer"
+            >
+                GitHub ↗
+            </a>
+
+        </div>
+
+    </footer>
+
+    <script type="module">
+
+        import {
+            getProjects,
+            getPath,
+            detectLocale
+        } from '../config/loader.js';
+
+        const languageSelect =
+            document.querySelector('[data-language]');
+
+        const footerText =
+            document.querySelector('[data-footer-text]');
+
+        const year =
+            document.querySelector('#year');
+
+        const root =
+            document.querySelector('#project-list');
+
+        function renderFooter(locale) {
+
+            if (locale === 'ru-RU') {
+                footerText.textContent =
+                    'Инструменты для CS2 и FACEIT.';
+            } else {
+                footerText.textContent =
+                    'Tools for CS2 and FACEIT.';
+            }
+
+        }
+
+        function render(locale) {
+
+            const language =
+                locale.split('-')[0];
+
+            languageSelect.value = locale;
+
+            renderFooter(locale);
+
+            root.innerHTML = '';
+
+            getProjects().forEach(project => {
+
+                const metadata =
+                    project.meta[language] ||
+                    project.meta.en;
+
+                root.insertAdjacentHTML(
+                    'beforeend',
+                    `
+                    <a
+                        href="${getPath(project.route)}"
+                        style="
+                            display:block;
+                            padding:28px;
+                            border:1px solid var(--border);
+                            border-radius:8px;
+                            background:var(--surface)
+                        "
+                    >
+                        <strong style="font-size:28px">
+                            ${metadata.name}
+                        </strong>
+
+                        <div
+                            style="
+                                color:var(--muted);
+                                margin-top:6px
+                            "
+                        >
+                            ${metadata.short}
+                        </div>
+                    </a>
+                    `
+                );
+
+            });
+
+        }
+
+        const initialLocale =
+            detectLocale();
+
+        render(initialLocale);
+
+        languageSelect.addEventListener(
+            'change',
+            event => {
+
+                const locale =
+                    event.target.value;
+
+                localStorage.setItem(
+                    'site-locale',
+                    locale
+                );
+
+                render(locale);
+
+            }
+        );
+
+        year.textContent =
+            new Date().getFullYear();
+
+    </script>
+
 </body>
 
 </html>
