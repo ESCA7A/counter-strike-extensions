@@ -1107,6 +1107,16 @@ async function buildProjects() {
 }
 
 async function copyProjectTemplates() {
+  const outputProjectsDir = path.join(DIST_DIR, 'projects');
+
+  await fs.mkdir(outputProjectsDir, { recursive: true });
+
+  // Registry нужен главной странице сайта.
+  await fs.copyFile(
+    path.join(PROJECTS_DIR, 'registry.js'),
+    path.join(outputProjectsDir, 'registry.js')
+  );
+
   const projectEntries = await fs.readdir(PROJECTS_DIR, {
     withFileTypes: true
   });
@@ -1114,30 +1124,26 @@ async function copyProjectTemplates() {
   for (const projectEntry of projectEntries) {
     if (!projectEntry.isDirectory()) continue;
 
-    const sourceIndex = path.join(
-      PROJECTS_DIR,
-      projectEntry.name,
-      'index.html'
-    );
+    const projectId = projectEntry.name;
+    const sourceProjectDir = path.join(PROJECTS_DIR, projectId);
+    const outputProjectDir = path.join(outputProjectsDir, projectId);
 
-    try {
-      await fs.access(sourceIndex);
-    } catch {
-      continue;
+    await fs.mkdir(outputProjectDir, { recursive: true });
+
+    for (const fileName of ['config.js', 'index.html']) {
+      const sourceFile = path.join(sourceProjectDir, fileName);
+
+      try {
+        await fs.access(sourceFile);
+      } catch {
+        continue;
+      }
+
+      await fs.copyFile(
+        sourceFile,
+        path.join(outputProjectDir, fileName)
+      );
     }
-
-    const outputDir = path.join(
-      DIST_DIR,
-      'projects',
-      projectEntry.name
-    );
-
-    await fs.mkdir(outputDir, { recursive: true });
-
-    await fs.copyFile(
-      sourceIndex,
-      path.join(outputDir, 'index.html')
-    );
   }
 }
 
