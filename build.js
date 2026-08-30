@@ -30,6 +30,33 @@ async function copySiteSource() {
     }
 
     if (entry.name === 'projects') {
+      await fs.mkdir(path.join(DIST_DIR, 'projects'), { recursive: true });
+
+      await fs.copyFile(
+        path.join(PROJECTS_DIR, 'registry.js'),
+        path.join(DIST_DIR, 'projects', 'registry.js')
+      );
+
+      for (const project of PROJECTS) {
+        if (!project.enabled) continue;
+
+        const projectDir = path.join(PROJECTS_DIR, project.id);
+        const distProjectDir = path.join(DIST_DIR, 'projects', project.id);
+
+        try {
+          await fs.access(projectDir);
+        } catch {
+          continue;
+        }
+
+        await fs.mkdir(distProjectDir, { recursive: true });
+
+        await fs.copyFile(
+          path.join(projectDir, 'config.js'),
+          path.join(distProjectDir, 'config.js')
+        );
+      }
+
       continue;
     }
 
