@@ -241,19 +241,35 @@ async function copySiteSource() {
 async function cleanProjectOutput(project) {
   const outputDir = path.join(DIST_DIR, "projects", project.id)
 
-  const entries = await fs.readdir(outputDir, {
-    withFileTypes: true,
-  })
+  if (!(await fileExists(outputDir))) {
+    return
+  }
 
-  for (const entry of entries) {
-    if (entry.name === "index.html" || entry.name === "config.js") {
-      continue
-    }
+  async function walk(directory) {
+    const entries = await fs.readdir(directory, {
+      withFileTypes: true,
+    })
 
-    if (entry.isFile() && entry.name.toLowerCase().endsWith(".md")) {
-      await fs.rm(path.join(outputDir, entry.name), { force: true })
+    for (const entry of entries) {
+      const fullPath = path.join(directory, entry.name)
+
+      if (entry.isDirectory()) {
+        await walk(fullPath)
+        continue
+      }
+
+      if (
+        entry.isFile() &&
+        entry.name.toLowerCase().endsWith(".md")
+      ) {
+        await fs.rm(fullPath, {
+          force: true,
+        })
+      }
     }
   }
+
+  await walk(outputDir)
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1019,6 +1035,162 @@ location.replace(
 /* -------------------------------------------------------------------------- */
 /* PROJECTS                                                                   */
 /* -------------------------------------------------------------------------- */
+
+function projectTemplate({
+  locale,
+  project,
+  metadata,
+  html,
+}) {
+  const ru = isRu(locale)
+
+  const projectMeta =
+    project.meta?.[localeCode(locale)] ||
+    project.meta?.[locale] ||
+    project.meta?.[localeCode(DEFAULT_LOCALE)] ||
+    project.meta?.[DEFAULT_LOCALE] ||
+    {}
+
+  const title =
+    metadata.title ||
+    projectMeta.name ||
+    project.id
+
+  const description =
+    metadata.description ||
+    projectMeta.description ||
+    projectMeta.short ||
+    ""
+
+  const projectType = project.type || ""
+
+  return `<!doctype html>
+<html lang="${escapeHtml(locale)}">
+
+<head>
+
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="${escapeHtml(description)}"
+  >
+
+  <title>
+    ${escapeHtml(title)} — ${escapeHtml(projectMeta.name || project.id)} — ESCA7A
+  </title>
+
+  <link
+    rel="stylesheet"
+    href="${BASE_PATH}/css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="${BASE_PATH}/components/projects/projects.css"
+  >
+
+</head>
+
+<body>
+
+<header class="site-header">
+
+  <div class="nav-shell">
+
+    <a
+      class="brand"
+      href="${BASE_PATH}/"
+      aria-label="ESCA7A"
+    >
+      ESCA7A<span>.</span>
+    </a>
+
+    <nav
+      class="nav-links"
+      aria-label="${ru ? "Навигация" : "Navigation"}"
+    >
+
+      ${siteNavigation({
+        locale,
+        active: "projects",
+      })}
+
+    </nav>
+
+    <a
+      href="${BASE_PATH}/projects/"
+    >
+      ← ${ru ? "Проекты" : "Projects"}
+    </a>
+
+  </div>
+
+</header>
+
+<main class="project-page section-shell">
+
+  <header class="project-header">
+
+    ${
+      projectType
+        ? `<div class="section-kicker">
+            ${escapeHtml(projectType.replace(/-/g, " ").toUpperCase())}
+          </div>`
+        : ""
+    }
+
+    <h1>
+      ${escapeHtml(title)}
+    </h1>
+
+    ${
+      description
+        ? `<p class="project-description">
+            ${escapeHtml(description)}
+          </p>`
+        : ""
+    }
+
+  </header>
+
+  <article class="project-content">
+
+    ${html}
+
+  </article>
+
+</main>
+
+<footer class="site-footer">
+
+  <div class="footer-shell">
+
+    <span>
+      © ${new Date().getFullYear()} ESCA7A —
+      ${ru ? "Инструменты для CS2 и FACEIT." : "Tools for CS2 and FACEIT."}
+    </span>
+
+    <a
+      href="${escapeHtml(SITE_CONFIG.social.github)}"
+      target="_blank"
+      rel="noreferrer"
+    >
+      GitHub ↗
+    </a>
+
+  </div>
+
+</footer>
+
+</body>
+</html>`
+}
 
 async function buildProject(project) {
   if (!project.enabled) {
