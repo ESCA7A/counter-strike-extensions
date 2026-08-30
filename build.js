@@ -30,18 +30,28 @@ async function copySiteSource() {
     }
 
     if (entry.name === 'projects') {
-      await fs.mkdir(path.join(DIST_DIR, 'projects'), { recursive: true });
+      const distProjectsDir = path.join(DIST_DIR, 'projects');
 
+      await fs.mkdir(distProjectsDir, { recursive: true });
+
+      // Static projects page
       await fs.copyFile(
-        path.join(PROJECTS_DIR, 'registry.js'),
-        path.join(DIST_DIR, 'projects', 'registry.js')
+        path.join(PROJECTS_DIR, 'index.html'),
+        path.join(distProjectsDir, 'index.html')
       );
 
+      // Runtime registry
+      await fs.copyFile(
+        path.join(PROJECTS_DIR, 'registry.js'),
+        path.join(distProjectsDir, 'registry.js')
+      );
+
+      // Project configs required by registry.js
       for (const project of PROJECTS) {
         if (!project.enabled) continue;
 
         const projectDir = path.join(PROJECTS_DIR, project.id);
-        const distProjectDir = path.join(DIST_DIR, 'projects', project.id);
+        const distProjectDir = path.join(distProjectsDir, project.id);
 
         try {
           await fs.access(projectDir);
