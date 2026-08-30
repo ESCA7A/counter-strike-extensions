@@ -158,8 +158,9 @@ function publicationListTemplate({ locale, publications }) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="${escapeHtml(description)}">
   <title>${title} — ESCA7A</title>
-  <link rel="stylesheet" href="${BASE_PATH}/css/style.css">
-  <link rel="stylesheet" href="${BASE_PATH}/components/publications/publications.css">
+<link rel="stylesheet" href="${BASE_PATH}/css/style.css">
+<link rel="stylesheet" href="${BASE_PATH}/components/navigation/navigation.css">
+<link rel="stylesheet" href="${BASE_PATH}/components/publications/publications.css">
 </head>
 <body>
 <header class="site-header publication-header">
