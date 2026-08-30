@@ -20,6 +20,7 @@ function renderNavigation(locale) {
       <nav class="nav-links" aria-label="Primary">
         <a href="${getPath('/')}" data-nav="home">${t('nav.home', locale)}</a>
         ${SITE_CONFIG.navigation.showProjects ? `<a href="${getPath('/projects/')}" data-nav="projects">${t('nav.projects', locale)}</a>` : ''}
+        ${SITE_CONFIG.navigation.showPublications ? `<a href="${getPath('/publications/')}" data-nav="publications">${t('nav.publications', locale)}</a>` : ''}
         ${SITE_CONFIG.navigation.showAbout ? `<a href="${getPath('/about/')}" data-nav="about">${t('nav.about', locale)}</a>` : ''}
       </nav>
       <div class="nav-actions">

@@ -20,6 +20,7 @@ export const SITE_CONFIG = {
   },
   navigation: {
     showProjects: true,
+    showPublications: true,
     showAbout: true,
     showPrivacy: true,
     showLanguageSwitcher: true
@@ -28,7 +29,7 @@ export const SITE_CONFIG = {
 
 export const I18N = {
   'ru-RU': {
-    nav: { home: 'Главная', projects: 'Проекты', about: 'Обо мне', privacy: 'Политика' },
+    nav: { home: 'Главная', projects: 'Проекты', publications: 'Публикации', about: 'Обо мне', privacy: 'Политика' },
     hero: {
       eyebrow: 'COUNTER-STRIKE × FACEIT',
       title: 'Инструменты для соревновательной игры.',
@@ -49,7 +50,7 @@ export const I18N = {
     common: { open: 'Открыть', previous: 'Предыдущий', next: 'Следующий', language: 'Язык' }
   },
   'en-US': {
-    nav: { home: 'Home', projects: 'Projects', about: 'About', privacy: 'Privacy' },
+    nav: { home: 'Home', projects: 'Projects', publications: 'Publications', about: 'About', privacy: 'Privacy' },
     hero: {
       eyebrow: 'COUNTER-STRIKE × FACEIT',
       title: 'Tools for competitive play.',
