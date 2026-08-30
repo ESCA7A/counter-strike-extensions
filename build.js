@@ -30,43 +30,7 @@ async function copySiteSource() {
     }
 
     if (entry.name === 'projects') {
-      const distProjectsDir = path.join(DIST_DIR, 'projects');
-
-      await fs.mkdir(distProjectsDir, { recursive: true });
-
-      // Static projects page
-      await fs.copyFile(
-        path.join(PROJECTS_DIR, 'index.html'),
-        path.join(distProjectsDir, 'index.html')
-      );
-
-      // Runtime registry
-      await fs.copyFile(
-        path.join(PROJECTS_DIR, 'registry.js'),
-        path.join(distProjectsDir, 'registry.js')
-      );
-
-      // Project configs required by registry.js
-      for (const project of PROJECTS) {
-        if (!project.enabled) continue;
-
-        const projectDir = path.join(PROJECTS_DIR, project.id);
-        const distProjectDir = path.join(distProjectsDir, project.id);
-
-        try {
-          await fs.access(projectDir);
-        } catch {
-          continue;
-        }
-
-        await fs.mkdir(distProjectDir, { recursive: true });
-
-        await fs.copyFile(
-          path.join(projectDir, 'config.js'),
-          path.join(distProjectDir, 'config.js')
-        );
-      }
-
+      await copyProjectTemplates();
       continue;
     }
 
@@ -1140,6 +1104,41 @@ async function buildProjects() {
   }
 
   return projects;
+}
+
+async function copyProjectTemplates() {
+  const projectEntries = await fs.readdir(PROJECTS_DIR, {
+    withFileTypes: true
+  });
+
+  for (const projectEntry of projectEntries) {
+    if (!projectEntry.isDirectory()) continue;
+
+    const sourceIndex = path.join(
+      PROJECTS_DIR,
+      projectEntry.name,
+      'index.html'
+    );
+
+    try {
+      await fs.access(sourceIndex);
+    } catch {
+      continue;
+    }
+
+    const outputDir = path.join(
+      DIST_DIR,
+      'projects',
+      projectEntry.name
+    );
+
+    await fs.mkdir(outputDir, { recursive: true });
+
+    await fs.copyFile(
+      sourceIndex,
+      path.join(outputDir, 'index.html')
+    );
+  }
 }
 
 function siteNavigation({ locale, active }) {
