@@ -312,6 +312,247 @@ async function cleanProjectOutput(project) {
 /* PUBLICATIONS                                                               */
 /* -------------------------------------------------------------------------- */
 
+function publicationTemplate({
+  locale,
+  metadata,
+  html,
+  slug,
+  availableLocales,
+}) {
+  const ru = isRu(locale)
+
+  const title = metadata.title || slug
+  const description = metadata.description || ""
+
+  const languageLinks = availableLocales
+    .map(
+      (item) => `
+        <a
+          class="publication-language${item === locale ? " active" : ""}"
+          href="${BASE_PATH}/publications/${encodeURIComponent(slug)}/${item}/"
+          ${item === locale ? 'aria-current="page"' : ""}
+        >
+          ${localeLabel(item)}
+        </a>
+      `
+    )
+    .join("")
+
+  return `<!doctype html>
+<html lang="${escapeHtml(locale)}">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+
+  <meta
+    name="description"
+    content="${escapeHtml(description)}"
+  >
+
+  <title>${escapeHtml(title)} — ESCA7A</title>
+
+  <link
+    rel="stylesheet"
+    href="${BASE_PATH}/css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="${BASE_PATH}/components/navigation/navigation.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="${BASE_PATH}/components/publications/publication.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="${BASE_PATH}/components/footer/footer.css"
+  >
+</head>
+
+<body>
+
+<header class="site-header">
+
+  <div class="nav-shell">
+
+    <a
+      class="brand"
+      href="${BASE_PATH}/"
+      aria-label="ESCA7A"
+    >
+      ESCA7A<span>.</span>
+    </a>
+
+    <nav
+      class="nav-links"
+      aria-label="${ru ? "Основная навигация" : "Primary navigation"}"
+    >
+
+      <a href="${BASE_PATH}/">
+        ${ru ? "Главная" : "Home"}
+      </a>
+
+      ${
+        SITE_CONFIG.navigation.showProjects
+          ? `
+            <a href="${BASE_PATH}/projects/">
+              ${ru ? "Проекты" : "Projects"}
+            </a>
+          `
+          : ""
+      }
+
+      ${
+        SITE_CONFIG.navigation.showPublications
+          ? `
+            <a
+              href="${BASE_PATH}/publications/"
+              aria-current="page"
+            >
+              ${ru ? "Публикации" : "Publications"}
+            </a>
+          `
+          : ""
+      }
+
+      ${
+        SITE_CONFIG.navigation.showAbout
+          ? `
+            <a href="${BASE_PATH}/about/">
+              ${ru ? "Обо мне" : "About"}
+            </a>
+          `
+          : ""
+      }
+
+    </nav>
+
+    <div class="nav-actions">
+
+      ${
+        SITE_CONFIG.navigation.showLanguageSwitcher
+          ? `
+            <label class="language-switcher">
+
+              <span class="sr-only">
+                ${ru ? "Язык" : "Language"}
+              </span>
+
+              <select
+                data-language
+                aria-label="${ru ? "Язык" : "Language"}"
+              >
+                ${LOCALES.map(
+                  (item) => `
+                    <option
+                      value="${escapeHtml(item)}"
+                      ${item === locale ? "selected" : ""}
+                    >
+                      ${localeLabel(item)}
+                    </option>
+                  `
+                ).join("")}
+              </select>
+
+            </label>
+          `
+          : ""
+      }
+
+      <a
+        class="nav-github"
+        href="${escapeHtml(SITE_CONFIG.social.github)}"
+        target="_blank"
+        rel="noreferrer"
+      >
+        GitHub
+      </a>
+
+    </div>
+
+  </div>
+
+</header>
+
+<main class="publication-page section-shell">
+
+  <article class="publication-content">
+
+    <header class="publication-title">
+
+      <div class="section-kicker">
+        ${ru ? "ПУБЛИКАЦИЯ" : "PUBLICATION"}
+      </div>
+
+      <h1>
+        ${escapeHtml(title)}
+      </h1>
+
+      ${
+        description
+          ? `
+            <p class="publication-description">
+              ${escapeHtml(description)}
+            </p>
+          `
+          : ""
+      }
+
+      ${
+        metadata.date
+          ? `
+            <time datetime="${escapeHtml(metadata.date)}">
+              ${escapeHtml(metadata.date)}
+            </time>
+          `
+          : ""
+      }
+
+    </header>
+
+    <div class="publication-body">
+      ${html}
+    </div>
+
+  </article>
+
+</main>
+
+<footer class="site-footer">
+
+  <div class="footer-shell">
+
+    <span>
+      © ${new Date().getFullYear()} ESCA7A —
+      ${ru
+        ? "Инструменты для CS2 и FACEIT."
+        : "Tools for CS2 and FACEIT."}
+    </span>
+
+    <a
+      href="${escapeHtml(SITE_CONFIG.social.github)}"
+      target="_blank"
+      rel="noreferrer"
+    >
+      GitHub ↗
+    </a>
+
+  </div>
+
+</footer>
+
+</body>
+</html>`
+}
+
 async function findPublicationDirectories() {
   const entries = await fs.readdir(PUBLICATIONS_DIR, { withFileTypes: true })
 
