@@ -163,15 +163,23 @@ function getMarkdownEntity(
  * ROUTING
  * ---------------------------------------------------------
  *
- * Generic Markdown routing:
+ * Markdown source:
  *
  * section/
  *   entity/
  *     locale.md
  *
- * becomes:
+ * route:
  *
- * /section/entity/
+ * section/entity
+ *
+ * locale:
+ *
+ * locale
+ *
+ * buildPage() combines route + locale into:
+ *
+ * /section/entity/locale/
  *
  * Nested Markdown:
  *
@@ -180,15 +188,13 @@ function getMarkdownEntity(
  *     page/
  *       locale.md
  *
- * becomes:
+ * route:
+ *
+ * section/entity/page
+ *
+ * public URL:
  *
  * /section/entity/page/locale/
- *
- * The root Markdown file of an entity intentionally does
- * not contain the locale in its URL. This allows entity
- * landing pages such as:
- *
- * /projects/training-cs2-nades/
  *
  */
 
@@ -225,23 +231,29 @@ function getMarkdownRoute({
   if (parts.length === 0) {
     return {
       section,
-      entity: null,
-      path: path.posix.join(
+
+      entity:
+        null,
+
+      path:
         section,
-        locale
-      ),
+
       locale
     };
   }
 
   return {
     section,
-    entity: parts[0],
-    path: path.posix.join(
-      section,
-      ...parts,
-      locale
-    ),
+
+    entity:
+      parts[0],
+
+    path:
+      path.posix.join(
+        section,
+        ...parts
+      ),
+
     locale
   };
 }
@@ -853,10 +865,7 @@ function buildMarkdownIndex({
     sourceRoot,
 
     pagePath:
-      path.posix.join(
-        section,
-        locale
-      ),
+      section,
 
     body,
 
