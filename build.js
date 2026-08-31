@@ -4,7 +4,7 @@ import Handlebars from 'handlebars';
 
 import { buildMarkdown } from './build/markdown.js';
 import { buildPublicationIndex } from './build/publicationBuilder.js';
-import { PROJECTS } from './src/projects/registry.js';
+import { buildBannerData } from './build/bannerBuilder.js';
 
 import locales from './src/config/locales.js';
 import menu from './src/config/menu.js';
@@ -12,27 +12,16 @@ import footer from './src/config/footer.js';
 import home from './src/config/home.js';
 
 const ROOT = process.cwd();
-
 const SRC_DIR = path.join(ROOT, 'src');
 const TEMPLATES_DIR = path.join(SRC_DIR, 'templates');
 const PAGES_DIR = path.join(SRC_DIR, 'pages');
 const PROJECTS_DIR = path.join(SRC_DIR, 'projects');
-const PUBLICATIONS_DIR = path.join(
-  SRC_DIR,
-  'publications'
-);
-
+const PUBLICATIONS_DIR = path.join(SRC_DIR, 'publications');
 const DIST_DIR = path.join(ROOT, 'dist');
-
 const CSS_DIR = path.join(SRC_DIR, 'css');
-const HEADER_DIR = path.join(
-  TEMPLATES_DIR,
-  'header'
-);
-const LOCALE_SWITCHER_FILE = path.join(
-  HEADER_DIR,
-  'localeSwitcher.js'
-);
+const HEADER_DIR = path.join(TEMPLATES_DIR, 'header');
+const LOCALE_SWITCHER_FILE = path.join(HEADER_DIR, 'localeSwitcher.js');
+const BANNER_FILE = path.join(TEMPLATES_DIR, 'home', 'banner.js');
 
 /*
  * ---------------------------------------------------------
@@ -97,33 +86,19 @@ function loadTemplate(name) {
   return readFile(filePath);
 }
 
-const baseTemplate = Handlebars.compile(
-  loadTemplate('layouts/base.hbs')
-);
+const baseTemplate = Handlebars.compile(loadTemplate('layouts/base.hbs'));
 
-const homeTemplate = Handlebars.compile(
-  loadTemplate('home/index.hbs')
-);
+const homeTemplate = Handlebars.compile(loadTemplate('home/index.hbs'));
 
-const publicationsTemplate =
-  Handlebars.compile(
-    loadTemplate('publications/index.hbs')
-  );
+const publicationsTemplate = Handlebars.compile(loadTemplate('publications/index.hbs'));
 
-Handlebars.registerPartial(
-  'header',
-  loadTemplate('header/header.hbs')
-);
+Handlebars.registerPartial('header', loadTemplate('header/header.hbs'));
 
-Handlebars.registerPartial(
-  'footer',
-  loadTemplate('footer/footer.hbs')
-);
+Handlebars.registerPartial('footer', loadTemplate('footer/footer.hbs'));
 
-Handlebars.registerPartial(
-  'menu',
-  loadTemplate('menu/menu.hbs')
-);
+Handlebars.registerPartial('menu', loadTemplate('menu/menu.hbs'));
+
+Handlebars.registerPartial('banner', loadTemplate('home/banner.hbs'));
 
 /*
  * ---------------------------------------------------------
@@ -424,7 +399,12 @@ function createPageData({
     pagePath === 'home'
       ? homeTemplate({
           home: home[locale],
-          projects: PROJECTS
+
+          banners:
+            buildBannerData({
+              locale,
+              siteBasePath: SITE_BASE_PATH
+            })
         })
       : null;
 
@@ -565,7 +545,8 @@ function buildAssets() {
     path.join(
       DIST_DIR,
       'js',
-      'localeSwitcher.js'
+      'localeSwitcher.js',
+      'banner.js'
     ),
     readFile(LOCALE_SWITCHER_FILE)
   );
@@ -601,9 +582,6 @@ function build() {
 
   pageCount += buildSource(PAGES_DIR);
   pageCount += buildSource(PROJECTS_DIR);
-
-pageCount += buildSource(PAGES_DIR);
-pageCount += buildSource(PROJECTS_DIR);
 
   const publicationIndexCount =
     buildPublicationIndex({
