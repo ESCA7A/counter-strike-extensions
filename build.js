@@ -596,6 +596,7 @@ function build() {
 
   const markdownCount = buildMarkdown({
   sourceRoot: PUBLICATIONS_DIR,
+  pageRoot: SRC_DIR,
   buildPage
   });
 

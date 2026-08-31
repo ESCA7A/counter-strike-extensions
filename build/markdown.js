@@ -96,6 +96,7 @@ function getLocale(filePath) {
 
 export function buildMarkdown({
   sourceRoot,
+  pageRoot,
   buildPage
 }) {
   const files = getMarkdownFiles(
@@ -115,7 +116,7 @@ export function buildMarkdown({
     const outputPath = buildPage({
       indexPath: filePath,
       locale,
-      sourceRoot,
+      sourceRoot: pageRoot,
       body,
       meta: data
     });
