@@ -16,6 +16,10 @@ const PROJECTS_DIR = path.join(SRC_DIR, 'projects');
 
 const DIST_DIR = path.join(ROOT, 'dist');
 
+const CSS_DIR = path.join(SRC_DIR, 'css');
+const COMPONENTS_DIR = path.join(SRC_DIR, 'components');
+const JS_DIR = path.join(SRC_DIR, 'js');
+
 /*
  * ---------------------------------------------------------
  * SITE
@@ -47,6 +51,20 @@ function writeFile(filePath, content) {
     filePath,
     content,
     'utf8'
+  );
+}
+
+function copyDirectory(sourceDirectory, targetDirectory) {
+  if (!fs.existsSync(sourceDirectory)) {
+    return;
+  }
+
+  fs.cpSync(
+    sourceDirectory,
+    targetDirectory,
+    {
+      recursive: true
+    }
   );
 }
 
@@ -467,9 +485,26 @@ function buildSource(sourceRoot) {
 
 /*
  * ---------------------------------------------------------
- * CLEAN
+ * ASSETS
  * ---------------------------------------------------------
  */
+
+function buildAssets() {
+  copyDirectory(
+    CSS_DIR,
+    path.join(DIST_DIR, 'css')
+  );
+
+  copyDirectory(
+    COMPONENTS_DIR,
+    path.join(DIST_DIR, 'css')
+  );
+
+  copyDirectory(
+    JS_DIR,
+    path.join(DIST_DIR, 'js')
+  );
+}
 
 function cleanDist() {
   if (fs.existsSync(DIST_DIR)) {
@@ -495,6 +530,7 @@ function build() {
   console.log('Building site...');
 
   cleanDist();
+  buildAssets();
 
   let pageCount = 0;
 

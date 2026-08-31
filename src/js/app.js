@@ -1,5 +1,5 @@
-import { SITE_CONFIG, I18N } from '../config/site.config.js';
-import { detectLocale, saveLocale, t, getPath, getProjects } from '../config/loader.js';
+import { SITE_CONFIG, I18N } from '../../config/site.config.js';
+import { detectLocale, saveLocale, t, getPath, getProjects } from '../../config/loader.js';
 
 const components = {
   navigation: document.querySelector('[data-component="navigation"]'),
