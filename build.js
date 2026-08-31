@@ -2,6 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Handlebars from 'handlebars';
 
+import { PROJECTS } from './src/projects/registry.js';
+
 import locales from './src/config/locales.js';
 import menu from './src/config/menu.js';
 import footer from './src/config/footer.js';
@@ -17,8 +19,6 @@ const PROJECTS_DIR = path.join(SRC_DIR, 'projects');
 const DIST_DIR = path.join(ROOT, 'dist');
 
 const CSS_DIR = path.join(SRC_DIR, 'css');
-const COMPONENTS_DIR = path.join(SRC_DIR, 'components');
-const JS_DIR = path.join(SRC_DIR, 'js');
 
 /*
  * ---------------------------------------------------------
@@ -85,6 +85,10 @@ function loadTemplate(name) {
 
 const baseTemplate = Handlebars.compile(
   loadTemplate('layouts/base.hbs')
+);
+
+const homeTemplate = Handlebars.compile(
+  loadTemplate('home/index.hbs')
 );
 
 Handlebars.registerPartial(
@@ -326,58 +330,6 @@ function extractBody(source) {
   return source.trim();
 }
 
-/*
- * ---------------------------------------------------------
- * PAGE DATA
- * ---------------------------------------------------------
- */
-
-function createPageData({
-  locale,
-  pagePath,
-  body
-}) {
-  const menuPath =
-    pagePath === 'home'
-      ? ''
-      : pagePath.split(path.sep)[0] || '';
-
-  return {
-    locale: {
-      code: locale,
-      label: locales.available[locale].label
-    },
-
-    site: {
-      basePath: SITE_BASE_PATH
-    },
-
-    meta: {
-      title: 'ESCA7A — Counter-Strike Developer',
-
-      description:
-        'ESCA7A — developer of Counter-Strike and FACEIT tools.'
-    },
-
-    assets: {
-      css: `${SITE_BASE_PATH}css`,
-      js: `${SITE_BASE_PATH}js`
-    },
-
-    navigation: createNavigation(
-      locale,
-      menuPath
-    ),
-
-    localization: createLocalization(locale),
-
-    footer: createFooter(locale),
-
-    home: home[locale],
-
-    body
-  };
-}
 
 /*
  * ---------------------------------------------------------
@@ -413,6 +365,62 @@ function getOutputDirectory(
  * BUILD PAGE
  * ---------------------------------------------------------
  */
+
+function createPageData({
+  locale,
+  pagePath,
+  body
+}) {
+  const menuPath =
+    pagePath === 'home'
+      ? ''
+      : pagePath.split(path.sep)[0] || '';
+
+  const pageHome =
+    pagePath === 'home'
+      ? homeTemplate({
+          home: home[locale],
+          projects: PROJECTS
+        })
+      : null;
+
+  return {
+    locale: {
+      code: locale,
+      label: locales.available[locale].label
+    },
+
+    site: {
+      basePath: SITE_BASE_PATH
+    },
+
+    meta: {
+      title: 'ESCA7A — Counter-Strike Developer',
+
+      description:
+        'ESCA7A — developer of Counter-Strike and FACEIT tools.'
+    },
+
+    assets: {
+      css: `${SITE_BASE_PATH}css`,
+      js: `${SITE_BASE_PATH}js`
+    },
+
+    navigation: createNavigation(
+      locale,
+      menuPath
+    ),
+
+    localization: createLocalization(locale),
+
+    footer: createFooter(locale),
+
+    home: home[locale],
+
+    body:
+      pageHome ?? body
+  };
+}
 
 function buildPage({
   indexPath,
@@ -493,16 +501,6 @@ function buildAssets() {
   copyDirectory(
     CSS_DIR,
     path.join(DIST_DIR, 'css')
-  );
-
-  copyDirectory(
-    COMPONENTS_DIR,
-    path.join(DIST_DIR, 'css')
-  );
-
-  copyDirectory(
-    JS_DIR,
-    path.join(DIST_DIR, 'js')
   );
 }
 
