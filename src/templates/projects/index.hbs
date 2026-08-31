@@ -1,86 +1,96 @@
 <section class="projects-page">
+    <div class="projects-shell">
 
-  <div class="projects-shell">
+        <header class="projects-header">
 
-    <header class="projects-header">
-
-      <span class="projects-eyebrow">
-        PROJECTS
-      </span>
-
-      <h1>
-        {{#if locale.isRussian}}
-          Проекты
-        {{else}}
-          Projects
-        {{/if}}
-      </h1>
-
-      <p>
-        {{#if locale.isRussian}}
-          Инструменты, расширения и другие проекты
-          для Counter-Strike и FACEIT.
-        {{else}}
-          Tools, extensions and other projects
-          for Counter-Strike and FACEIT.
-        {{/if}}
-      </p>
-
-    </header>
-
-    <div class="projects-list">
-
-      {{#each projects}}
-
-        <article class="project-card">
-
-          <div class="project-card-content">
-
-            <span class="project-card-index">
-              {{@index}}
+            <span class="projects-eyebrow">
+                PROJECTS
             </span>
 
-            <h2 class="project-card-title">
-              {{name}}
-            </h2>
+            <h1>
+                {{#if locale.isRussian}}
+                    Мои проекты
+                {{else}}
+                    My Projects
+                {{/if}}
+            </h1>
 
-            {{#if description}}
-              <p class="project-card-description">
-                {{description}}
-              </p>
-            {{/if}}
+            <p>
+                {{#if locale.isRussian}}
+                    Здесь я собираю свои проекты,
+                    инструменты и разработки для Counter-Strike.
+                {{else}}
+                    My projects, tools and development
+                    for Counter-Strike.
+                {{/if}}
+            </p>
 
-          </div>
+        </header>
 
-          <a
-            class="project-card-link"
-            href="{{url}}"
-          >
-            {{#if ../locale.isRussian}}
-              Открыть
+        <div class="projects-list">
+
+            {{#each items}}
+
+                <article class="project-card">
+
+                    <div class="project-card-content">
+
+                        <span class="project-card-index">
+                            {{#if @first}}
+                                01
+                            {{else}}
+                                {{@index}}
+                            {{/if}}
+                        </span>
+
+                        <h2 class="project-card-title">
+                            {{name}}
+                        </h2>
+
+                        {{#if description}}
+                            <p class="project-card-description">
+                                {{description}}
+                            </p>
+                        {{/if}}
+
+                    </div>
+
+                    <div class="project-card-footer">
+
+                        <span class="project-card-label">
+                            PROJECT
+                        </span>
+
+                        <a
+                            class="project-card-link"
+                            href="{{url}}"
+                        >
+                            {{#if ../locale.isRussian}}
+                                Открыть
+                            {{else}}
+                                Open
+                            {{/if}}
+
+                            <span aria-hidden="true">↗</span>
+                        </a>
+
+                    </div>
+
+                </article>
+
             {{else}}
-              Open
-            {{/if}}
 
-            <span aria-hidden="true">→</span>
-          </a>
+                <p class="projects-empty">
+                    {{#if locale.isRussian}}
+                        Проектов пока нет.
+                    {{else}}
+                        No projects yet.
+                    {{/if}}
+                </p>
 
-        </article>
+            {{/each}}
 
-      {{else}}
-
-        <p class="projects-empty">
-          {{#if locale.isRussian}}
-            Проектов пока нет.
-          {{else}}
-            No projects yet.
-          {{/if}}
-        </p>
-
-      {{/each}}
+        </div>
 
     </div>
-
-  </div>
-
 </section>

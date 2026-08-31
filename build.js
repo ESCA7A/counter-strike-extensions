@@ -605,7 +605,6 @@ function build() {
   let pageCount = 0;
 
   pageCount += buildSource(PAGES_DIR);
-  pageCount += buildSource(PROJECTS_DIR);
 
   const publicationIndexCount =
     buildPublicationIndex({
