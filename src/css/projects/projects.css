@@ -23,33 +23,24 @@
 }
 
 .project-slider {
-    position: relative;
+  position: relative;
+}
+
+.project-viewport {
+  width: 100%;
+  overflow: hidden;
 }
 
 .project-track {
-    display: flex;
-    gap: 18px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-    padding: 2px 2px 20px;
-}
-
-.project-track::-webkit-scrollbar {
-    display: none;
+  display: flex;
+  gap: 24px;
+  width: max-content;
+  transition: transform 0.45s ease;
+  will-change: transform;
 }
 
 .project-card {
-    flex: 0 0 min(780px, 84vw);
-    min-height: 390px;
-    scroll-snap-align: start;
-    padding: 28px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: radial-gradient(circle at 100% 0, rgba(255, 85, 0, .12), transparent 38%), linear-gradient(135deg, #181818, #101010);
+  flex: 0 0 100%;
 }
 
 .project-card-top,
@@ -113,23 +104,23 @@
 }
 
 .slider-controls {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-    margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 24px;
 }
 
 .slider-controls button {
-  width: 42px;
-  height: 42px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  border-radius: 6px;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: transparent;
   cursor: pointer;
-  transition:
-    border-color .2s ease,
-    background .2s ease,
-    transform .2s ease;
+}
+
+.slider-controls button:disabled {
+  opacity: 0.3;
+  cursor: default;
 }
 
 .slider-controls button:hover {
