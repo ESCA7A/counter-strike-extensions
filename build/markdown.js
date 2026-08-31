@@ -776,6 +776,10 @@ function buildMarkdownSource({
         sourceRoot
       });
 
+    if (!locales.available[route.locale]) {
+      continue;
+    }
+
     const {
       data,
       body

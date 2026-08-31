@@ -3,7 +3,6 @@ import path from 'node:path';
 import Handlebars from 'handlebars';
 
 import { buildMarkdown } from './build/markdown.js';
-import { buildPublicationIndex } from './build/publicationBuilder.js';
 import { buildBanners } from './build/bannerBuilder.js';
 
 import locales from './src/config/locales.js';
@@ -605,24 +604,6 @@ function build() {
   let pageCount = 0;
 
   pageCount += buildSource(PAGES_DIR);
-
-  const publicationIndexCount =
-    buildPublicationIndex({
-      publicationsDirectory:
-        PUBLICATIONS_DIR,
-
-      locales,
-
-      buildPage,
-
-      renderTemplate:
-        publicationsTemplate,
-
-      siteBasePath:
-        SITE_BASE_PATH
-    });
-
-  pageCount += publicationIndexCount;
 
   const markdownPageCount =
     buildMarkdown({
