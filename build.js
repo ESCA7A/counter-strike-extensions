@@ -34,12 +34,19 @@ function readFile(filePath) {
 }
 
 function ensureDir(dirPath) {
-  fs.mkdirSync(dirPath, { recursive: true });
+  fs.mkdirSync(dirPath, {
+    recursive: true
+  });
 }
 
 function writeFile(filePath, content) {
   ensureDir(path.dirname(filePath));
-  fs.writeFileSync(filePath, content, 'utf8');
+
+  fs.writeFileSync(
+    filePath,
+    content,
+    'utf8'
+  );
 }
 
 /*
@@ -49,7 +56,10 @@ function writeFile(filePath, content) {
  */
 
 function loadTemplate(name) {
-  const filePath = path.join(TEMPLATES_DIR, name);
+  const filePath = path.join(
+    TEMPLATES_DIR,
+    name
+  );
 
   return readFile(filePath);
 }
@@ -80,23 +90,26 @@ Handlebars.registerPartial(
  */
 
 function getLocales() {
-  return Object.entries(locales.available).map(
-    ([code, config]) => ({
-      code,
-      label: config.label
-    })
-  );
+  return Object.entries(
+    locales.available
+  ).map(([code, config]) => ({
+    code,
+    label: config.label
+  }));
 }
 
 function createLocalization(activeLocale) {
   return {
-    languageLabel: activeLocale === 'ru-RU'
-      ? 'Язык'
-      : 'Language',
+    languageLabel:
+      activeLocale === 'ru-RU'
+        ? 'Язык'
+        : 'Language',
 
     available: getLocales().map(locale => ({
       ...locale,
-      active: locale.code === activeLocale
+
+      active:
+        locale.code === activeLocale
     }))
   };
 }
@@ -110,8 +123,14 @@ function createLocalization(activeLocale) {
 function createMenu(activeLocale, currentPath) {
   return Object.values(menu).map(item => ({
     label: item.label[activeLocale],
-    url: createMenuUrl(item.path, activeLocale),
-    active: currentPath === item.path
+
+    url: createMenuUrl(
+      item.path,
+      activeLocale
+    ),
+
+    active:
+      currentPath === item.path
   }));
 }
 
@@ -119,19 +138,28 @@ function createMenuUrl(menuPath, locale) {
   return `${SITE_BASE_PATH}${menuPath}/${locale}/`;
 }
 
-function createNavigation(activeLocale, currentPath) {
+function createNavigation(
+  activeLocale,
+  currentPath
+) {
   const github = footer.links?.github;
 
   return {
-    menuLabel: activeLocale === 'ru-RU'
-      ? 'Основная навигация'
-      : 'Main navigation',
+    menuLabel:
+      activeLocale === 'ru-RU'
+        ? 'Основная навигация'
+        : 'Main navigation',
 
-    menu: createMenu(activeLocale, currentPath),
+    menu: createMenu(
+      activeLocale,
+      currentPath
+    ),
 
     github: github
       ? {
-          label: github.label[activeLocale],
+          label:
+            github.label[activeLocale],
+
           url: github.url
         }
       : null
@@ -146,10 +174,15 @@ function createNavigation(activeLocale, currentPath) {
 
 function createFooter(activeLocale) {
   return {
-    copyright: footer.copyright[activeLocale],
+    copyright:
+      footer.copyright[activeLocale],
 
-    links: Object.values(footer.links ?? {}).map(link => ({
-      label: link.label[activeLocale],
+    links: Object.values(
+      footer.links ?? {}
+    ).map(link => ({
+      label:
+        link.label[activeLocale],
+
       url: link.url
     }))
   };
@@ -162,7 +195,9 @@ function createFooter(activeLocale) {
  */
 
 function getLocaleDirectories() {
-  return new Set(Object.keys(locales.available));
+  return new Set(
+    Object.keys(locales.available)
+  );
 }
 
 function isLocaleDirectory(name) {
@@ -173,6 +208,17 @@ function isLocaleDirectory(name) {
  * ---------------------------------------------------------
  * PAGE DISCOVERY
  * ---------------------------------------------------------
+ *
+ * We search recursively for:
+ *
+ *   .../<locale>/index.html
+ *
+ * Examples:
+ *
+ *   src/pages/home/ru-RU/index.html
+ *   src/pages/about/ru-RU/index.html
+ *   src/projects/woki/ru-RU/index.html
+ *
  */
 
 function findPages(directory) {
@@ -183,22 +229,33 @@ function findPages(directory) {
   const result = [];
 
   function walk(currentDirectory) {
-    for (const entry of fs.readdirSync(currentDirectory, {
-      withFileTypes: true
-    })) {
-      const fullPath = path.join(currentDirectory, entry.name);
+    for (const entry of fs.readdirSync(
+      currentDirectory,
+      {
+        withFileTypes: true
+      }
+    )) {
+      const fullPath = path.join(
+        currentDirectory,
+        entry.name
+      );
 
       if (!entry.isDirectory()) {
         continue;
       }
 
       if (isLocaleDirectory(entry.name)) {
-        const indexPath = path.join(fullPath, 'index.html');
+        const indexPath = path.join(
+          fullPath,
+          'index.html'
+        );
 
         if (fs.existsSync(indexPath)) {
           result.push({
             indexPath,
+
             locale: entry.name,
+
             localeDirectory: fullPath
           });
         }
@@ -219,33 +276,16 @@ function findPages(directory) {
  * ---------------------------------------------------------
  */
 
-function getPagePath(indexPath, sourceRoot) {
-  const relativeDirectory = path.relative(
+function getPagePath(
+  indexPath,
+  sourceRoot
+) {
+  return path.relative(
     sourceRoot,
-    path.dirname(path.dirname(indexPath))
-  );
 
-  return relativeDirectory;
-}
-
-/*
- * ---------------------------------------------------------
- * OUTPUT PATH
- * ---------------------------------------------------------
- */
-
-function getOutputDirectory(pagePath, locale) {
-  if (pagePath === 'home') {
-    return path.join(
-      DIST_DIR,
-      locale
-    );
-  }
-
-  return path.join(
-    DIST_DIR,
-    pagePath,
-    locale
+    path.dirname(
+      path.dirname(indexPath)
+    )
   );
 }
 
@@ -278,14 +318,17 @@ function createPageData({
   pagePath,
   body
 }) {
-  const menuPath = pagePath === 'home'
-    ? ''
-    : pagePath.split(path.sep)[0] || '';
+  const menuPath =
+    pagePath === 'home'
+      ? ''
+      : pagePath.split(path.sep)[0] || '';
 
   return {
     locale: {
       code: locale,
-      label: locales.available[locale].label
+
+      label:
+        locales.available[locale].label
     },
 
     site: {
@@ -293,7 +336,8 @@ function createPageData({
     },
 
     meta: {
-      title: 'ESCA7A — Counter-Strike Developer',
+      title:
+        'ESCA7A — Counter-Strike Developer',
 
       description:
         'ESCA7A — developer of Counter-Strike and FACEIT tools.'
@@ -309,12 +353,38 @@ function createPageData({
       menuPath
     ),
 
-    localization: createLocalization(locale),
+    localization:
+      createLocalization(locale),
 
-    footer: createFooter(locale),
+    footer:
+      createFooter(locale),
 
     body
   };
+}
+
+/*
+ * ---------------------------------------------------------
+ * OUTPUT PATH
+ * ---------------------------------------------------------
+ */
+
+function getOutputDirectory(
+  pagePath,
+  locale
+) {
+  if (pagePath === 'home') {
+    return path.join(
+      DIST_DIR,
+      locale
+    );
+  }
+
+  return path.join(
+    DIST_DIR,
+    pagePath,
+    locale
+  );
 }
 
 /*
@@ -329,6 +399,7 @@ function buildPage({
   sourceRoot
 }) {
   const source = readFile(indexPath);
+
   const body = extractBody(source);
 
   const pagePath = getPagePath(
@@ -344,19 +415,25 @@ function buildPage({
 
   const html = baseTemplate(data);
 
-  const outputDirectory = getOutputDirectory(
-    pagePath,
-    locale
+  const outputDirectory =
+    getOutputDirectory(
+      pagePath,
+      locale
+    );
+
+  const outputPath = path.join(
+    outputDirectory,
+    'index.html'
   );
 
   writeFile(
-    path.join(outputDirectory, 'index.html'),
+    outputPath,
     html
   );
 
   return path.relative(
     ROOT,
-    path.join(outputDirectory, 'index.html')
+    outputPath
   );
 }
 
@@ -367,7 +444,9 @@ function buildPage({
  */
 
 function buildSource(sourceRoot) {
-  const pages = findPages(sourceRoot);
+  const pages = findPages(
+    sourceRoot
+  );
 
   for (const page of pages) {
     const outputPath = buildPage({
@@ -375,7 +454,9 @@ function buildSource(sourceRoot) {
       sourceRoot
     });
 
-    console.log(`  ${outputPath}`);
+    console.log(
+      `  ${outputPath}`
+    );
   }
 
   return pages.length;
@@ -389,10 +470,13 @@ function buildSource(sourceRoot) {
 
 function cleanDist() {
   if (fs.existsSync(DIST_DIR)) {
-    fs.rmSync(DIST_DIR, {
-      recursive: true,
-      force: true
-    });
+    fs.rmSync(
+      DIST_DIR,
+      {
+        recursive: true,
+        force: true
+      }
+    );
   }
 
   ensureDir(DIST_DIR);
@@ -405,16 +489,25 @@ function cleanDist() {
  */
 
 function build() {
-  console.log('Building site...');
+  console.log(
+    'Building site...'
+  );
 
   cleanDist();
 
   let pageCount = 0;
 
-  pageCount += buildSource(PAGES_DIR);
-  pageCount += buildSource(PROJECTS_DIR);
+  pageCount += buildSource(
+    PAGES_DIR
+  );
 
-  console.log(`Built ${pageCount} page(s).`);
+  pageCount += buildSource(
+    PROJECTS_DIR
+  );
+
+  console.log(
+    `Built ${pageCount} page(s).`
+  );
 }
 
 build();
