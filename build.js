@@ -17,6 +17,14 @@ const DIST_DIR = path.join(ROOT, 'dist');
 
 /*
  * ---------------------------------------------------------
+ * SITE
+ * ---------------------------------------------------------
+ */
+
+const SITE_BASE_PATH = '/counter-strike-extensions/';
+
+/*
+ * ---------------------------------------------------------
  * FILESYSTEM
  * ---------------------------------------------------------
  */
@@ -108,7 +116,7 @@ function createMenu(activeLocale, currentPath) {
 }
 
 function createMenuUrl(menuPath, locale) {
-  return `${menuPath}/${locale}/`;
+  return `${SITE_BASE_PATH}${menuPath}/${locale}/`;
 }
 
 function createNavigation(activeLocale, currentPath) {
@@ -165,17 +173,6 @@ function isLocaleDirectory(name) {
  * ---------------------------------------------------------
  * PAGE DISCOVERY
  * ---------------------------------------------------------
- *
- * We search recursively for:
- *
- *   .../<locale>/index.html
- *
- * Example:
- *
- *   src/pages/about/ru-RU/index.html
- *   src/projects/woki/ru-RU/index.html
- *   src/projects/woki/settings/ru-RU/index.html
- *
  */
 
 function findPages(directory) {
@@ -233,6 +230,40 @@ function getPagePath(indexPath, sourceRoot) {
 
 /*
  * ---------------------------------------------------------
+ * OUTPUT PATH
+ * ---------------------------------------------------------
+ */
+
+function getOutputDirectory(pagePath, locale) {
+  /*
+   * home/<locale>/index.html
+   *
+   * becomes:
+   *
+   * dist/index.html
+   */
+
+  if (pagePath === 'home' && locale === locales.default) {
+    return DIST_DIR;
+  }
+
+  /*
+   * Other pages keep their logical path:
+   *
+   * projects/<project>/<locale>
+   * ->
+   * dist/projects/<project>/<locale>
+   */
+
+  return path.join(
+    DIST_DIR,
+    pagePath,
+    locale
+  );
+}
+
+/*
+ * ---------------------------------------------------------
  * CONTENT
  * ---------------------------------------------------------
  */
@@ -260,7 +291,9 @@ function createPageData({
   pagePath,
   body
 }) {
-  const menuPath = pagePath.split(path.sep)[0] || '';
+  const menuPath = pagePath === 'home'
+    ? ''
+    : pagePath.split(path.sep)[0] || '';
 
   return {
     locale: {
@@ -269,18 +302,19 @@ function createPageData({
     },
 
     site: {
-      basePath: '/'
+      basePath: SITE_BASE_PATH
     },
 
     meta: {
       title: 'ESCA7A — Counter-Strike Developer',
+
       description:
         'ESCA7A — developer of Counter-Strike and FACEIT tools.'
     },
 
     assets: {
-      css: '/css',
-      js: '/js'
+      css: `${SITE_BASE_PATH}css`,
+      js: `${SITE_BASE_PATH}js`
     },
 
     navigation: createNavigation(
@@ -323,8 +357,7 @@ function buildPage({
 
   const html = baseTemplate(data);
 
-  const outputDirectory = path.join(
-    DIST_DIR,
+  const outputDirectory = getOutputDirectory(
     pagePath,
     locale
   );
@@ -333,11 +366,16 @@ function buildPage({
     path.join(outputDirectory, 'index.html'),
     html
   );
+
+  return path.relative(
+    ROOT,
+    path.join(outputDirectory, 'index.html')
+  );
 }
 
 /*
  * ---------------------------------------------------------
- * BUILD
+ * BUILD SOURCE
  * ---------------------------------------------------------
  */
 
@@ -345,14 +383,22 @@ function buildSource(sourceRoot) {
   const pages = findPages(sourceRoot);
 
   for (const page of pages) {
-    buildPage({
+    const outputPath = buildPage({
       ...page,
       sourceRoot
     });
+
+    console.log(`  ${outputPath}`);
   }
 
   return pages.length;
 }
+
+/*
+ * ---------------------------------------------------------
+ * CLEAN
+ * ---------------------------------------------------------
+ */
 
 function cleanDist() {
   if (fs.existsSync(DIST_DIR)) {
@@ -364,6 +410,12 @@ function cleanDist() {
 
   ensureDir(DIST_DIR);
 }
+
+/*
+ * ---------------------------------------------------------
+ * BUILD
+ * ---------------------------------------------------------
+ */
 
 function build() {
   console.log('Building site...');
