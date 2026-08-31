@@ -180,11 +180,11 @@ function createNavigation(
 
     github: github
       ? {
-          label:
-            github.label[activeLocale],
+        label:
+          github.label[activeLocale],
 
-          url: github.url
-        }
+        url: github.url
+      }
       : null
   };
 }
@@ -379,9 +379,9 @@ function createPageData({
   const pageHome =
     pagePath === 'home'
       ? homeTemplate({
-          home: home[locale],
-          projects: PROJECTS
-        })
+        home: home[locale],
+        projects: PROJECTS
+      })
       : null;
 
   return {
