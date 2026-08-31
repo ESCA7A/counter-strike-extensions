@@ -19,6 +19,14 @@ const PROJECTS_DIR = path.join(SRC_DIR, 'projects');
 const DIST_DIR = path.join(ROOT, 'dist');
 
 const CSS_DIR = path.join(SRC_DIR, 'css');
+const HEADER_DIR = path.join(
+  TEMPLATES_DIR,
+  'header'
+);
+const LOCALE_SWITCHER_FILE = path.join(
+  HEADER_DIR,
+  'localeSwitcher.js'
+);
 
 /*
  * ---------------------------------------------------------
@@ -166,7 +174,7 @@ function createMenu(activeLocale, currentPath) {
   }));
 }
 
-function createMenuUrl(menuPath, locale) {
+function createPageUrl(menuPath, locale) {
   if (menuPath === '') {
     if (locale === locales.default) {
       return SITE_BASE_PATH;
@@ -191,6 +199,12 @@ function createNavigation(
         ? 'Основная навигация'
         : 'Main navigation',
 
+    homeUrl:
+      createPageUrl(
+        'home',
+        activeLocale
+      ),
+
     menu: createMenu(
       activeLocale,
       currentPath
@@ -198,11 +212,11 @@ function createNavigation(
 
     github: github
       ? {
-        label:
-          github.label[activeLocale],
+          label:
+            github.label[activeLocale],
 
-        url: github.url
-      }
+          url: github.url
+        }
       : null
   };
 }
@@ -429,7 +443,10 @@ function createPageData({
       menuPath
     ),
 
-    localization: createLocalization(locale),
+    localization: createLocalization(
+      locale,
+      pagePath
+    ),
 
     footer: createFooter(locale),
 
@@ -519,6 +536,15 @@ function buildAssets() {
   copyDirectory(
     CSS_DIR,
     path.join(DIST_DIR, 'css')
+  );
+
+  writeFile(
+    path.join(
+      DIST_DIR,
+      'js',
+      'localeSwitcher.js'
+    ),
+    readFile(LOCALE_SWITCHER_FILE)
   );
 }
 
