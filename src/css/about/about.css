@@ -1,5 +1,73 @@
-.about-shell { padding: 120px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; margin-top: 18px; }
-.about-grid h2 { margin: 0; max-width: 590px; font-size: clamp(34px,4vw,52px); line-height: 1.02; letter-spacing: -.045em; }
-.about-grid p { margin: 4px 0 0; max-width: 500px; color: var(--muted); font-size: 16px; }
-@media (max-width: 760px) { .about-shell { padding: 80px 0; } .about-grid { grid-template-columns: 1fr; gap: 22px; } }
+/* =========================================================
+   ABOUT PAGE
+   ========================================================= */
+
+.about-page {
+  padding-top: 96px;
+  padding-bottom: 120px;
+}
+
+/* =========================================================
+   EYEBROW
+   ========================================================= */
+
+.about-page .eyebrow {
+  margin-bottom: 18px;
+
+  color: var(--faceit-orange);
+
+  font-size: 12px;
+  font-weight: 800;
+
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+/* =========================================================
+   TITLE
+   ========================================================= */
+
+.about-page h1 {
+  max-width: 900px;
+
+  margin: 0 0 28px;
+
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: .98;
+
+  letter-spacing: -.045em;
+}
+
+/* =========================================================
+   DESCRIPTION
+   ========================================================= */
+
+.about-page p {
+  max-width: 680px;
+
+  margin: 0;
+
+  color: var(--muted);
+
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .about-page {
+    padding-top: 56px;
+    padding-bottom: 80px;
+  }
+
+  .about-page h1 {
+    margin-bottom: 22px;
+  }
+
+  .about-page p {
+    font-size: 16px;
+  }
+}
