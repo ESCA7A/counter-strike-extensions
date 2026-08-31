@@ -235,25 +235,12 @@ function getPagePath(indexPath, sourceRoot) {
  */
 
 function getOutputDirectory(pagePath, locale) {
-  /*
-   * home/<locale>/index.html
-   *
-   * becomes:
-   *
-   * dist/index.html
-   */
-
-  if (pagePath === 'home' && locale === locales.default) {
-    return DIST_DIR;
+  if (pagePath === 'home') {
+    return path.join(
+      DIST_DIR,
+      locale
+    );
   }
-
-  /*
-   * Other pages keep their logical path:
-   *
-   * projects/<project>/<locale>
-   * ->
-   * dist/projects/<project>/<locale>
-   */
 
   return path.join(
     DIST_DIR,
