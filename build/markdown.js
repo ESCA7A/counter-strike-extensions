@@ -68,11 +68,19 @@ function parseMarkdown(filePath) {
     content
   } = matter(source);
 
-  return {
+    return {
     data,
 
-    body: marked.parse(content)
-  };
+    body: `
+        <article class="publication-page">
+        <div class="publication-content">
+            <div class="publication-body">
+            ${marked.parse(content)}
+            </div>
+        </div>
+        </article>
+    `
+    };
 }
 
 /*

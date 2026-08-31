@@ -10,8 +10,27 @@
 }
 
 .publication-content {
-  width: min(900px, 100%);
+  width: min(
+    900px,
+    calc(100% - 40px)
+  );
+
   margin-inline: auto;
+}
+
+@media (max-width: 700px) {
+  .publication-content {
+    width: calc(100% - 28px);
+  }
+
+  .publication-page {
+    padding-top: 40px;
+    padding-bottom: 64px;
+  }
+
+  .publication-body {
+    font-size: 16px;
+  }
 }
 
 /* =========================================================
