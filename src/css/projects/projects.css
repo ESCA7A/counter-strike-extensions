@@ -23,24 +23,33 @@
 }
 
 .project-slider {
-  position: relative;
+    position: relative;
 }
 
 .project-viewport {
-  width: 100%;
-  overflow: hidden;
+    width: 100%;
+    overflow: hidden;
 }
 
 .project-track {
-  display: flex;
-  gap: 24px;
-  width: max-content;
-  transition: transform 0.45s ease;
-  will-change: transform;
+    display: flex;
+    width: 100%;
+    transition: transform 0.45s ease;
+    will-change: transform;
 }
 
 .project-card {
-  flex: 0 0 100%;
+    box-sizing: border-box;
+    flex: 0 0 100%;
+    min-width: 0;
+    min-height: 360px;
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
 .project-card-top,
@@ -104,27 +113,34 @@
 }
 
 .slider-controls {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 20px;
 }
 
 .slider-controls button {
-  width: 44px;
-  height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  background: transparent;
-  cursor: pointer;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition:
+        border-color .2s ease,
+        opacity .2s ease,
+        background .2s ease;
+}
+
+.slider-controls button:hover:not(:disabled) {
+    border-color: #555;
+    background: rgba(255, 255, 255, .03);
 }
 
 .slider-controls button:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.slider-controls button:hover {
-    border-color: #555;
+    opacity: .25;
+    cursor: default;
 }
 
 @media (max-width: 760px) {
@@ -139,6 +155,7 @@
 
     .project-card {
         min-height: 350px;
+        padding: 24px;
     }
 
     .project-card h3 {
