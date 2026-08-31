@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="{{locale.code}}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {{#if meta.description}}
+    <meta name="description" content="{{meta.description}}">
+  {{/if}}
+
+  <title>{{meta.title}}</title>
+
+  <link rel="stylesheet" href="{{assets.css}}/style.css">
+  <link rel="stylesheet" href="{{assets.css}}/navigation/navigation.css">
+  <link rel="stylesheet" href="{{assets.css}}/footer/footer.css">
+
+  {{#if styles}}
+    {{#each styles}}
+      <link rel="stylesheet" href="{{../assets.css}}/{{this}}">
+    {{/each}}
+  {{/if}}
+</head>
+
+<body>
+
+<header class="site-header">
+  {{> header}}
+</header>
+
+<main>
+  {{{body}}}
+</main>
+
+<footer class="site-footer">
+  {{> footer}}
+</footer>
+
+<script type="module" src="{{assets.js}}/app.js"></script>
+
+</body>
+</html>

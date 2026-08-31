@@ -1,0 +1,44 @@
+<div class="nav-shell">
+
+  <a class="brand" href="{{site.basePath}}{{locale.code}}/">
+    ESCA<span>7A</span>
+  </a>
+
+  {{> menu}}
+
+  <div class="nav-actions">
+
+    {{#if navigation.github}}
+      <a
+        class="nav-github"
+        href="{{navigation.github.url}}"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {{navigation.github.label}}
+      </a>
+    {{/if}}
+
+    <label class="language-switcher">
+      <span class="sr-only">
+        {{localization.languageLabel}}
+      </span>
+
+      <select
+        id="language-switcher"
+        aria-label="{{localization.languageLabel}}"
+      >
+        {{#each localization.available}}
+          <option
+            value="{{code}}"
+            {{#if active}}selected{{/if}}
+          >
+            {{label}}
+          </option>
+        {{/each}}
+      </select>
+    </label>
+
+  </div>
+
+</div>

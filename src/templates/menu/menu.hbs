@@ -1,0 +1,16 @@
+<nav class="nav-links" aria-label="{{navigation.menuLabel}}">
+
+  {{#each navigation.menu}}
+
+    <a
+      href="{{url}}"
+      {{#if active}}
+        aria-current="page"
+      {{/if}}
+    >
+      {{label}}
+    </a>
+
+  {{/each}}
+
+</nav>

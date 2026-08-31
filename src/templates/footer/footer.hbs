@@ -1,0 +1,27 @@
+<div class="footer-shell">
+
+  <span>
+    {{footer.copyright}}
+  </span>
+
+  {{#if footer.links}}
+
+    <div class="footer-links">
+
+      {{#each footer.links}}
+
+        <a
+          href="{{url}}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {{label}}
+        </a>
+
+      {{/each}}
+
+    </div>
+
+  {{/if}}
+
+</div>
