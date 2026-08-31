@@ -21,7 +21,6 @@ const DIST_DIR = path.join(ROOT, 'dist');
 const CSS_DIR = path.join(SRC_DIR, 'css');
 const HEADER_DIR = path.join(TEMPLATES_DIR, 'header');
 const LOCALE_SWITCHER_FILE = path.join(HEADER_DIR, 'localeSwitcher.js');
-const BANNER_FILE = path.join(TEMPLATES_DIR, 'home', 'banner.js');
 
 /*
  * ---------------------------------------------------------
@@ -99,8 +98,6 @@ Handlebars.registerPartial('header', loadTemplate('header/header.hbs'));
 Handlebars.registerPartial('footer', loadTemplate('footer/footer.hbs'));
 
 Handlebars.registerPartial('menu', loadTemplate('menu/menu.hbs'));
-
-Handlebars.registerPartial('banner', loadTemplate('home/banner.hbs'));
 
 /*
  * ---------------------------------------------------------
@@ -558,7 +555,6 @@ function buildAssets() {
       DIST_DIR,
       'js',
       'localeSwitcher.js',
-      'banner.js'
     ),
     readFile(LOCALE_SWITCHER_FILE)
   );
