@@ -5,6 +5,7 @@ import Handlebars from 'handlebars';
 import locales from './src/config/locales.js';
 import menu from './src/config/menu.js';
 import footer from './src/config/footer.js';
+import home from './src/config/home.js';
 
 const ROOT = process.cwd();
 
@@ -326,9 +327,7 @@ function createPageData({
   return {
     locale: {
       code: locale,
-
-      label:
-        locales.available[locale].label
+      label: locales.available[locale].label
     },
 
     site: {
@@ -336,8 +335,7 @@ function createPageData({
     },
 
     meta: {
-      title:
-        'ESCA7A — Counter-Strike Developer',
+      title: 'ESCA7A — Counter-Strike Developer',
 
       description:
         'ESCA7A — developer of Counter-Strike and FACEIT tools.'
@@ -353,11 +351,11 @@ function createPageData({
       menuPath
     ),
 
-    localization:
-      createLocalization(locale),
+    localization: createLocalization(locale),
 
-    footer:
-      createFooter(locale),
+    footer: createFooter(locale),
+
+    home: home[locale],
 
     body
   };
@@ -374,6 +372,10 @@ function getOutputDirectory(
   locale
 ) {
   if (pagePath === 'home') {
+    if (locale === locales.default) {
+      return DIST_DIR;
+    }
+
     return path.join(
       DIST_DIR,
       locale
@@ -386,6 +388,7 @@ function getOutputDirectory(
     locale
   );
 }
+
 
 /*
  * ---------------------------------------------------------
@@ -489,25 +492,17 @@ function cleanDist() {
  */
 
 function build() {
-  console.log(
-    'Building site...'
-  );
+  console.log('Building site...');
 
   cleanDist();
 
   let pageCount = 0;
 
-  pageCount += buildSource(
-    PAGES_DIR
-  );
+  pageCount += buildSource(PAGES_DIR);
+  pageCount += buildSource(PROJECTS_DIR);
 
-  pageCount += buildSource(
-    PROJECTS_DIR
-  );
-
-  console.log(
-    `Built ${pageCount} page(s).`
-  );
+  console.log(`Built ${pageCount} page(s).`);
 }
 
 build();
+

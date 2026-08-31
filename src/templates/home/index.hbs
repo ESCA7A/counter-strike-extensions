@@ -1,0 +1,188 @@
+<section class="hero">
+  <div class="hero-shell">
+
+    <div class="hero-copy">
+
+      <div class="eyebrow">
+        {{home.hero.eyebrow}}
+      </div>
+
+      <h1>
+        {{home.hero.title}}
+      </h1>
+
+      <p>
+        {{home.hero.text}}
+      </p>
+
+      <a
+        class="button button-primary"
+        href="{{home.hero.cta.url}}"
+      >
+        {{home.hero.cta.label}}
+        <span>→</span>
+      </a>
+
+    </div>
+
+    <div class="hero-mark" aria-hidden="true">
+
+      <div class="hero-grid"></div>
+
+      <div class="hero-orb">
+        CS<span>2</span>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+
+<section class="about">
+
+  <div class="about-shell section-shell">
+
+    <div class="section-kicker">
+      {{home.about.eyebrow}}
+    </div>
+
+    <div class="about-grid">
+
+      <h2>
+        {{home.about.title}}
+      </h2>
+
+      <p>
+        {{home.about.text}}
+      </p>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<section class="projects" id="projects">
+
+  <div class="projects-shell section-shell">
+
+    <div class="section-heading">
+
+      <div>
+
+        <div class="section-kicker">
+          {{home.projects.eyebrow}}
+        </div>
+
+        <h2>
+          {{home.projects.title}}
+        </h2>
+
+      </div>
+
+      <p>
+        {{home.projects.text}}
+      </p>
+
+    </div>
+
+    <div class="project-slider">
+
+      <div class="project-track">
+
+        {{#each projects}}
+
+          <article class="project-card">
+
+            <div class="project-card-top">
+
+              <span class="project-type">
+                {{type}}
+              </span>
+
+              {{#if status}}
+                <span class="project-status">
+                  <i></i>
+                  ACTIVE
+                </span>
+              {{/if}}
+
+            </div>
+
+            <div class="project-card-content">
+
+              <div>
+
+                <h3>
+                  {{name}}
+                </h3>
+
+                <p>
+                  {{description}}
+                </p>
+
+              </div>
+
+              {{#if features}}
+
+                <ul>
+
+                  {{#each features}}
+                    <li>{{this}}</li>
+                  {{/each}}
+
+                </ul>
+
+              {{/if}}
+
+            </div>
+
+            <div class="project-card-bottom">
+
+              {{#if url}}
+
+                <a
+                  class="button button-secondary"
+                  href="{{url}}"
+                >
+                  {{../home.common.open}}
+                  <span>↗</span>
+                </a>
+
+              {{/if}}
+
+            </div>
+
+          </article>
+
+        {{/each}}
+
+      </div>
+
+      <div class="slider-controls">
+
+        <button
+          type="button"
+          data-projects-prev
+          aria-label="{{home.common.previous}}"
+        >
+          ←
+        </button>
+
+        <button
+          type="button"
+          data-projects-next
+          aria-label="{{home.common.next}}"
+        >
+          →
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
