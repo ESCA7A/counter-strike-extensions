@@ -1,0 +1,95 @@
+<section class="publications-page">
+
+  <div class="publications-shell">
+
+    <header class="publications-header">
+
+      <span class="publications-eyebrow">
+        {{#if locale.isRussian}}
+          ПУБЛИКАЦИИ
+        {{else}}
+          PUBLICATIONS
+        {{/if}}
+      </span>
+
+      <h1>
+        {{#if locale.isRussian}}
+          Статьи и заметки
+        {{else}}
+          Articles & Notes
+        {{/if}}
+      </h1>
+
+      <p>
+        {{#if locale.isRussian}}
+          Здесь я собираю статьи о Counter-Strike,
+          разработке и собственных проектах.
+        {{else}}
+          Articles about Counter-Strike,
+          development and my projects.
+        {{/if}}
+      </p>
+
+    </header>
+
+    <div class="publications-list">
+
+      {{#each publications}}
+
+        <article class="publication-card">
+
+          <div class="publication-card-content">
+
+            {{#if date}}
+              <time
+                class="publication-card-date"
+                datetime="{{date}}"
+              >
+                {{date}}
+              </time>
+            {{/if}}
+
+            <h2 class="publication-card-title">
+              {{title}}
+            </h2>
+
+            {{#if description}}
+              <p class="publication-card-description">
+                {{description}}
+              </p>
+            {{/if}}
+
+          </div>
+
+          <a
+            class="publication-card-link"
+            href="{{../site.basePath}}publications/{{url}}"
+          >
+            {{#if ../locale.isRussian}}
+              Читать публикацию
+            {{else}}
+              Read publication
+            {{/if}}
+
+            <span aria-hidden="true">→</span>
+          </a>
+
+        </article>
+
+      {{else}}
+
+        <p class="publications-empty">
+          {{#if locale.isRussian}}
+            Публикаций пока нет.
+          {{else}}
+            No publications yet.
+          {{/if}}
+        </p>
+
+      {{/each}}
+
+    </div>
+
+  </div>
+
+</section>

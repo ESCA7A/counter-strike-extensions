@@ -3,7 +3,7 @@ import path from 'node:path';
 import Handlebars from 'handlebars';
 
 import { buildMarkdown } from './build/markdown.js';
-
+import { buildPublicationIndex } from './build/publicationBuilder.js';
 import { PROJECTS } from './src/projects/registry.js';
 
 import locales from './src/config/locales.js';
@@ -104,6 +104,11 @@ const baseTemplate = Handlebars.compile(
 const homeTemplate = Handlebars.compile(
   loadTemplate('home/index.hbs')
 );
+
+const publicationsTemplate =
+  Handlebars.compile(
+    loadTemplate('publications/index.hbs')
+  );
 
 Handlebars.registerPartial(
   'header',
@@ -597,10 +602,31 @@ function build() {
   pageCount += buildSource(PAGES_DIR);
   pageCount += buildSource(PROJECTS_DIR);
 
+pageCount += buildSource(PAGES_DIR);
+pageCount += buildSource(PROJECTS_DIR);
+
+  const publicationIndexCount =
+    buildPublicationIndex({
+      publicationsDirectory:
+        PUBLICATIONS_DIR,
+
+      locales,
+
+      buildPage,
+
+      renderTemplate:
+        publicationsTemplate,
+
+      siteBasePath:
+        SITE_BASE_PATH
+    });
+
+  pageCount += publicationIndexCount;
+
   const markdownCount = buildMarkdown({
-  sourceRoot: PUBLICATIONS_DIR,
-  pageRoot: SRC_DIR,
-  buildPage
+    sourceRoot: PUBLICATIONS_DIR,
+    pageRoot: SRC_DIR,
+    buildPage
   });
 
   pageCount += markdownCount;
