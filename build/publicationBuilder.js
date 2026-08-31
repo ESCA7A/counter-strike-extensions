@@ -131,7 +131,7 @@ function discoverPublications(
           publication.data.featured === true,
 
         url:
-          `${siteBasePath}publications/${slug}/${publication.locale}/`
+          `${slug}/${publication.locale}/`
       });
     }
 
