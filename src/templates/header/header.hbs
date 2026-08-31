@@ -1,6 +1,6 @@
 <div class="nav-shell">
 
-  <a class="brand" href="{{site.basePath}}{{locale.code}}/">
+  <a class="brand" href="{{navigation.homeUrl}}">
     WOKNA<span>TAKI</span>
   </a>
 
@@ -31,6 +31,7 @@
         {{#each localization.available}}
           <option
             value="{{code}}"
+            data-url="{{url}}"
             {{#if active}}selected{{/if}}
           >
             {{label}}
@@ -41,4 +42,7 @@
 
   </div>
 
+<script
+  src="{{site.basePath}}js/localeSwitcher.js"
+></script>
 </div>

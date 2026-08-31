@@ -121,7 +121,10 @@ function getLocales() {
   }));
 }
 
-function createLocalization(activeLocale) {
+function createLocalization(
+  activeLocale,
+  currentPath
+) {
   return {
     languageLabel:
       activeLocale === 'ru-RU'
@@ -132,7 +135,13 @@ function createLocalization(activeLocale) {
       ...locale,
 
       active:
-        locale.code === activeLocale
+        locale.code === activeLocale,
+
+      url:
+        createPageUrl(
+          currentPath,
+          locale.code
+        )
     }))
   };
 }
@@ -147,7 +156,7 @@ function createMenu(activeLocale, currentPath) {
   return Object.values(menu).map(item => ({
     label: item.label[activeLocale],
 
-    url: createMenuUrl(
+    url: createPageUrl(
       item.path,
       activeLocale
     ),
@@ -158,8 +167,17 @@ function createMenu(activeLocale, currentPath) {
 }
 
 function createMenuUrl(menuPath, locale) {
+  if (menuPath === '') {
+    if (locale === locales.default) {
+      return SITE_BASE_PATH;
+    }
+
+    return `${SITE_BASE_PATH}${locale}/`;
+  }
+
   return `${SITE_BASE_PATH}${menuPath}/${locale}/`;
 }
+
 
 function createNavigation(
   activeLocale,
