@@ -174,8 +174,11 @@ function createMenu(activeLocale, currentPath) {
   }));
 }
 
-function createPageUrl(menuPath, locale) {
-  if (menuPath === '') {
+function createPageUrl(pagePath, locale) {
+  if (
+    pagePath === '' ||
+    pagePath === 'home'
+  ) {
     if (locale === locales.default) {
       return SITE_BASE_PATH;
     }
@@ -183,7 +186,7 @@ function createPageUrl(menuPath, locale) {
     return `${SITE_BASE_PATH}${locale}/`;
   }
 
-  return `${SITE_BASE_PATH}${menuPath}/${locale}/`;
+  return `${SITE_BASE_PATH}${pagePath}/${locale}/`;
 }
 
 
