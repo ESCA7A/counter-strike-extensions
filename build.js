@@ -619,13 +619,23 @@ function build() {
 
   pageCount += publicationIndexCount;
 
-  const markdownCount = buildMarkdown({
-    sourceRoot: PUBLICATIONS_DIR,
-    pageRoot: SRC_DIR,
-    buildPage
-  });
+  const markdownPageCount =
+    buildMarkdown({
+      sourceRoots: [
+        PUBLICATIONS_DIR,
+        PROJECTS_DIR
+      ],
 
-  pageCount += markdownCount;
+      distDirectory:
+        DIST_DIR,
+
+      siteBasePath:
+        SITE_BASE_PATH,
+
+      buildPage
+    });
+
+  pageCount += markdownPageCount;
 
   console.log(
     `Built ${pageCount} page(s).`
