@@ -408,7 +408,7 @@ function createPageData({
   locale,
   pagePath,
   body,
-  meta
+  meta = {}
 }) {
   const menuPath =
     pagePath === 'home'
@@ -435,11 +435,11 @@ function createPageData({
 
     meta: {
       title:
-        meta?.title ??
+        meta.title ??
         'ESCA7A — Counter-Strike Developer',
 
       description:
-        meta?.description ??
+        meta.description ??
         'ESCA7A — developer of Counter-Strike and FACEIT tools.'
     },
 
@@ -471,19 +471,22 @@ function buildPage({
   indexPath,
   locale,
   sourceRoot,
-  body,
+  pagePath: explicitPagePath,
+  body: explicitBody,
   meta
 }) {
-  if (body === undefined) {
-    const source = readFile(indexPath);
+  const source = readFile(indexPath);
 
-    body = extractBody(source);
-  }
+  const body =
+    explicitBody ??
+    extractBody(source);
 
-  const pagePath = getPagePath(
-    indexPath,
-    sourceRoot
-  );
+  const pagePath =
+    explicitPagePath ??
+    getPagePath(
+      indexPath,
+      sourceRoot
+    );
 
   const data = createPageData({
     locale,

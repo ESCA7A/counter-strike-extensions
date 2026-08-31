@@ -88,6 +88,20 @@ function getLocale(filePath) {
   );
 }
 
+function getPublicationPath(
+  filePath,
+  sourceRoot
+) {
+  const relativePath = path.relative(
+    sourceRoot,
+    filePath
+  );
+
+  return path.dirname(
+    relativePath
+  );
+}
+
 /*
  * ---------------------------------------------------------
  * BUILD
@@ -96,7 +110,6 @@ function getLocale(filePath) {
 
 export function buildMarkdown({
   sourceRoot,
-  pageRoot,
   buildPage
 }) {
   const files = getMarkdownFiles(
@@ -113,10 +126,22 @@ export function buildMarkdown({
       body
     } = parseMarkdown(filePath);
 
+    const publicationPath =
+      getPublicationPath(
+        filePath,
+        sourceRoot
+      );
+
+    const pagePath = path.join(
+      'publications',
+      publicationPath
+    );
+
     const outputPath = buildPage({
       indexPath: filePath,
       locale,
-      sourceRoot: pageRoot,
+      sourceRoot,
+      pagePath,
       body,
       meta: data
     });
