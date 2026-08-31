@@ -1,71 +1,39 @@
-<div class="project-slider">
+{{#each banners}}
 
-  <div class="project-track" data-project-track>
+  <article class="project-card">
 
-    {{#each banners}}
+    <div class="project-card-top">
 
-      <article class="project-card">
+      <span class="project-type">
+        PROJECT
+      </span>
 
-        <div class="project-card-top">
+    </div>
 
-          <span class="project-type">
-            PROJECT
-          </span>
+    <div class="project-card-content">
 
-        </div>
+      <h3>
+        {{title}}
+      </h3>
 
-        <div class="project-card-content">
+      <p>
+        {{description}}
+      </p>
 
-          <div>
+    </div>
 
-            <h3>
-              {{title}}
-            </h3>
+    <div class="project-card-bottom">
 
-            <p>
-              {{description}}
-            </p>
+      <a
+        class="button button-secondary"
+        href="{{url}}"
+      >
+        {{../home.common.open}}
+        <span>↗</span>
+      </a>
 
-          </div>
+    </div>
 
-        </div>
+  </article>
 
-        <div class="project-card-bottom">
-
-          <a
-            class="button button-secondary"
-            href="{{url}}"
-          >
-            {{../home.common.open}}
-            <span>↗</span>
-          </a>
-
-        </div>
-
-      </article>
-
-    {{/each}}
-
-  </div>
-
-  <div class="slider-controls">
-
-    <button
-      type="button"
-      data-projects-prev
-      aria-label="{{home.common.previous}}"
-    >
-      ←
-    </button>
-
-    <button
-      type="button"
-      data-projects-next
-      aria-label="{{home.common.next}}"
-    >
-      →
-    </button>
-
-  </div>
-
-</div>
+{{/each}}

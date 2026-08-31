@@ -1,36 +1,31 @@
 import { PROJECTS } from '../src/projects/registry.js';
 
-export function buildBannerData({
+export function buildBanners({
   locale,
   siteBasePath
 }) {
   return PROJECTS
     .filter(project =>
-      project.enabled !== false &&
-      project.featureFlags?.showBanner !== false
+      project.enabled === true &&
+      project.featureFlags?.showBanner === true
     )
     .map(project => {
       const meta =
-        project.meta?.[locale];
-
-      if (!meta) {
-        return null;
-      }
+        locale === 'ru-RU'
+          ? project.meta.ru
+          : project.meta.en;
 
       return {
         id: project.id,
 
         title:
-          meta.name ?? '',
+          meta?.name ?? '',
 
         description:
-          meta.short ?? '',
+          meta?.short ?? '',
 
         url:
-          `${siteBasePath}${project.route
-            .replace(/^\/+/, '')
-            .replace(/\/+$/, '')}/${locale}/`
+          `${siteBasePath}${project.route.replace(/^\/+/, '')}`
       };
-    })
-    .filter(Boolean);
+    });
 }

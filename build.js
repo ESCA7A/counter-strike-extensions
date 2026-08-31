@@ -4,7 +4,7 @@ import Handlebars from 'handlebars';
 
 import { buildMarkdown } from './build/markdown.js';
 import { buildPublicationIndex } from './build/publicationBuilder.js';
-import { buildBannerData } from './build/bannerBuilder.js';
+import { buildBanners } from './build/bannerBuilder.js';
 
 import locales from './src/config/locales.js';
 import menu from './src/config/menu.js';
@@ -91,6 +91,8 @@ const baseTemplate = Handlebars.compile(loadTemplate('layouts/base.hbs'));
 const homeTemplate = Handlebars.compile(loadTemplate('home/index.hbs'));
 
 const publicationsTemplate = Handlebars.compile(loadTemplate('publications/index.hbs'));
+
+const bannerTemplate = Handlebars.compile(loadTemplate('home/banner.hbs'));
 
 Handlebars.registerPartial('header', loadTemplate('header/header.hbs'));
 
@@ -395,15 +397,25 @@ function createPageData({
       ? ''
       : pagePath.split(path.sep)[0] || '';
 
+  const pageBanners =
+    pagePath === 'home'
+      ? buildBanners({
+          locale,
+          siteBasePath: SITE_BASE_PATH
+        })
+      : [];
+
   const pageHome =
     pagePath === 'home'
       ? homeTemplate({
           home: home[locale],
 
-          banners:
-            buildBannerData({
-              locale,
-              siteBasePath: SITE_BASE_PATH
+          banners: pageBanners,
+
+          banner:
+            bannerTemplate({
+              home: home[locale],
+              banners: pageBanners
             })
         })
       : null;
