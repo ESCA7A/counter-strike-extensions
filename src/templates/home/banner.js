@@ -1,45 +1,48 @@
-document.querySelectorAll('.project-slider').forEach(slider => {
-  const track =
-    slider.querySelector('[data-project-track]');
+const track = document.querySelector('[data-project-track]');
+const previousButton = document.querySelector('[data-projects-prev]');
+const nextButton = document.querySelector('[data-projects-next]');
 
-  const previous =
-    slider.querySelector('[data-projects-prev]');
+if (track && previousButton && nextButton) {
+  const cards = Array.from(track.children);
 
-  const next =
-    slider.querySelector('[data-projects-next]');
+  let currentIndex = 0;
 
-  if (!track || !previous || !next) {
-    return;
-  }
+  function updateSlider() {
+    const currentCard = cards[currentIndex];
 
-  const getStep = () => {
-    const card =
-      track.querySelector('.project-card');
-
-    if (!card) {
-      return track.clientWidth;
+    if (!currentCard) {
+      return;
     }
 
-    const styles =
-      getComputedStyle(track);
+    track.style.transform =
+      `translateX(-${currentCard.offsetLeft}px)`;
 
-    const gap =
-      parseFloat(styles.columnGap || styles.gap) || 0;
+    previousButton.disabled =
+      currentIndex === 0;
 
-    return card.getBoundingClientRect().width + gap;
-  };
+    nextButton.disabled =
+      currentIndex === cards.length - 1;
+  }
 
-  previous.addEventListener('click', () => {
-    track.scrollBy({
-      left: -getStep(),
-      behavior: 'smooth'
-    });
+  previousButton.addEventListener('click', () => {
+    if (currentIndex === 0) {
+      return;
+    }
+
+    currentIndex -= 1;
+    updateSlider();
   });
 
-  next.addEventListener('click', () => {
-    track.scrollBy({
-      left: getStep(),
-      behavior: 'smooth'
-    });
+  nextButton.addEventListener('click', () => {
+    if (currentIndex >= cards.length - 1) {
+      return;
+    }
+
+    currentIndex += 1;
+    updateSlider();
   });
-});
+
+  window.addEventListener('resize', updateSlider);
+
+  updateSlider();
+}
