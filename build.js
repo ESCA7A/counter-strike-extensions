@@ -92,6 +92,8 @@ const homeTemplate = Handlebars.compile(loadTemplate('home/index.hbs'));
 
 const publicationsTemplate = Handlebars.compile(loadTemplate('publications/index.hbs'));
 
+const projectsTemplate = Handlebars.compile(loadTemplate('projects/index.hbs'));
+
 const bannerTemplate = Handlebars.compile(loadTemplate('home/banner.hbs'));
 
 Handlebars.registerPartial('header', loadTemplate('header/header.hbs'));
@@ -421,7 +423,8 @@ function createPageData({
   return {
     locale: {
       code: locale,
-      label: locales.available[locale].label
+      label: locales.available[locale].label,
+      isRussian: locale === 'ru-RU'
     },
 
     site: {
@@ -470,7 +473,10 @@ function buildPage({
   body: explicitBody,
   meta
 }) {
-  const source = readFile(indexPath);
+  const source =
+    indexPath
+      ? readFile(indexPath)
+      : '';
 
   const body =
     explicitBody ??
@@ -621,9 +627,22 @@ function build() {
 
   const markdownPageCount =
     buildMarkdown({
-      sourceRoots: [
-        PUBLICATIONS_DIR,
-        PROJECTS_DIR
+      sources: [
+        {
+          sourceRoot:
+            PUBLICATIONS_DIR,
+
+          renderIndexTemplate:
+            publicationsTemplate
+        },
+
+        {
+          sourceRoot:
+            PROJECTS_DIR,
+
+          renderIndexTemplate:
+            projectsTemplate
+        }
       ],
 
       distDirectory:
@@ -632,7 +651,9 @@ function build() {
       siteBasePath:
         SITE_BASE_PATH,
 
-      buildPage
+      buildPage,
+
+      locales
     });
 
   pageCount += markdownPageCount;

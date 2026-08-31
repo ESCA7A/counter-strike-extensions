@@ -133,6 +133,31 @@ function getMarkdownName(filePath) {
   );
 }
 
+function getMarkdownEntity(
+  filePath,
+  sourceRoot
+) {
+  const relativePath =
+    getMarkdownRelativePath(
+      filePath,
+      sourceRoot
+    );
+
+  const directory =
+    path.dirname(
+      relativePath
+    );
+
+  const parts =
+    directory === '.'
+      ? []
+      : directory
+          .split(path.sep)
+          .filter(Boolean);
+
+  return parts[0] ?? null;
+}
+
 /*
  * ---------------------------------------------------------
  * ROUTING
@@ -197,65 +222,27 @@ function getMarkdownRoute({
           .split(path.sep)
           .filter(Boolean);
 
-  /*
-   * Root Markdown:
-   *
-   * src/projects/woki/ru-RU.md
-   *
-   * sourceRoot:
-   * src/projects
-   *
-   * relative:
-   * woki/ru-RU.md
-   *
-   * route:
-   * projects/woki
-   */
-
-  if (parts.length === 1) {
+  if (parts.length === 0) {
     return {
       section,
-
-      entity:
-        parts[0],
-
-      path:
-        path.posix.join(
-          section,
-          parts[0]
-        ),
-
-      locale,
-
-      isEntityIndex: true
+      entity: null,
+      path: path.posix.join(
+        section,
+        locale
+      ),
+      locale
     };
   }
 
-  /*
-   * Nested Markdown:
-   *
-   * woki/foo/ru-RU.md
-   *
-   * route:
-   * projects/woki/foo/ru-RU
-   */
-
   return {
     section,
-
-    entity:
-      parts[0],
-
-    path:
-      path.posix.join(
-        section,
-        ...parts,
-        locale
-      ),
-
-    locale,
-
-    isEntityIndex: false
+    entity: parts[0],
+    path: path.posix.join(
+      section,
+      ...parts,
+      locale
+    ),
+    locale
   };
 }
 
@@ -471,8 +458,7 @@ function createMarkdownRenderer({
         });
 
       if (route) {
-        resolvedHref =
-          `${siteBasePath}${route.path}/${suffix}`;
+        resolvedHref = `${siteBasePath}${route.path}/${suffix}`;
       }
     }
 
@@ -530,6 +516,59 @@ function createMarkdownRenderer({
  * MARKDOWN
  * ---------------------------------------------------------
  */
+
+function collectMarkdownEntities({
+  files,
+  sourceRoot,
+  siteBasePath
+}) {
+  const entities = new Map();
+
+  for (const filePath of files) {
+    const entity =
+      getMarkdownEntity(
+        filePath,
+        sourceRoot
+      );
+
+    if (!entity) {
+      continue;
+    }
+
+    const {
+      data
+    } = parseMarkdown({
+      filePath,
+      sourceRoot,
+      siteBasePath
+    });
+
+    const route =
+      getMarkdownRoute({
+        filePath,
+        sourceRoot
+      });
+
+    if (!entities.has(entity)) {
+      entities.set(
+        entity,
+        {
+          name: entity,
+          locales: {}
+        }
+      );
+    }
+
+    entities.get(entity).locales[route.locale] = {
+      ...data,
+
+      url:
+        `${siteBasePath}${route.section}/${entity}/${route.locale}/`
+    };
+  }
+
+  return [...entities.values()];
+}
 
 function parseMarkdown({
   filePath,
@@ -670,7 +709,9 @@ function buildMarkdownSource({
   sourceRoot,
   distDirectory,
   siteBasePath,
-  buildPage
+  buildPage,
+  locales,
+  renderIndexTemplate
 }) {
   const files =
     getMarkdownFiles(
@@ -686,7 +727,47 @@ function buildMarkdownSource({
     distDirectory
   });
 
+  const entities =
+    collectMarkdownEntities({
+      files,
+      sourceRoot,
+      siteBasePath
+    });
+
+  const section =
+    getSourceSection(
+      sourceRoot
+    );
+
   let pageCount = 0;
+
+  for (const locale of Object.keys(
+    locales.available
+  )) {
+    const outputPath =
+      buildMarkdownIndex({
+        entities,
+
+        locale,
+
+        section,
+
+        sourceRoot,
+
+        renderTemplate:
+          renderIndexTemplate,
+
+        buildPage,
+
+        siteBasePath
+      });
+
+    console.log(
+      `  ${outputPath}`
+    );
+
+    pageCount++;
+  }
 
   for (const filePath of files) {
     const route =
@@ -733,24 +814,81 @@ function buildMarkdownSource({
   return pageCount;
 }
 
+function buildMarkdownIndex({
+  entities,
+  locale,
+  section,
+  sourceRoot,
+  renderTemplate,
+  buildPage,
+  siteBasePath
+}) {
+  const items =
+    entities
+      .filter(entity =>
+        entity.locales[locale]
+      )
+      .map(entity => ({
+        ...entity.locales[locale],
+
+        name:
+          entity.name,
+
+        url:
+          `${siteBasePath}${section}/${entity.name}/${locale}/`
+      }));
+
+  const body =
+    renderTemplate({
+      locale,
+      items
+    });
+
+  return buildPage({
+    indexPath:
+      null,
+
+    locale,
+
+    sourceRoot,
+
+    pagePath:
+      path.posix.join(
+        section,
+        locale
+      ),
+
+    body,
+
+    meta: {}
+  });
+}
+
 export function buildMarkdown({
-  sourceRoots,
+  sources,
   distDirectory,
   siteBasePath,
-  buildPage
+  buildPage,
+  locales
 }) {
   let pageCount = 0;
 
-  for (const sourceRoot of sourceRoots) {
+  for (const source of sources) {
     pageCount +=
       buildMarkdownSource({
-        sourceRoot,
+        sourceRoot:
+          source.sourceRoot,
 
         distDirectory,
 
         siteBasePath,
 
-        buildPage
+        buildPage,
+
+        locales,
+
+        renderIndexTemplate:
+          source.renderIndexTemplate
       });
   }
 
