@@ -5,11 +5,7 @@
     <header class="publications-header">
 
       <span class="publications-eyebrow">
-        {{#if locale.isRussian}}
-          ПУБЛИКАЦИИ
-        {{else}}
-          PUBLICATIONS
-        {{/if}}
+        PUBLICATIONS
       </span>
 
       <h1>
@@ -63,12 +59,12 @@
 
           <a
             class="publication-card-link"
-            href="{{../site.basePath}}publications/{{url}}"
+            href="{{url}}"
           >
             {{#if ../locale.isRussian}}
-              Читать публикацию
+              Читать
             {{else}}
-              Read publication
+              Read
             {{/if}}
 
             <span aria-hidden="true">→</span>
