@@ -2,6 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import Handlebars from 'handlebars';
 
+import { buildMarkdown } from './build/markdown.js';
+
 import { PROJECTS } from './src/projects/registry.js';
 
 import locales from './src/config/locales.js';
@@ -15,6 +17,10 @@ const SRC_DIR = path.join(ROOT, 'src');
 const TEMPLATES_DIR = path.join(SRC_DIR, 'templates');
 const PAGES_DIR = path.join(SRC_DIR, 'pages');
 const PROJECTS_DIR = path.join(SRC_DIR, 'projects');
+const PUBLICATIONS_DIR = path.join(
+  SRC_DIR,
+  'publications'
+);
 
 const DIST_DIR = path.join(ROOT, 'dist');
 
@@ -188,7 +194,6 @@ function createPageUrl(pagePath, locale) {
 
   return `${SITE_BASE_PATH}${pagePath}/${locale}/`;
 }
-
 
 function createNavigation(
   activeLocale,
@@ -365,7 +370,6 @@ function extractBody(source) {
   return source.trim();
 }
 
-
 /*
  * ---------------------------------------------------------
  * OUTPUT PATH
@@ -394,7 +398,6 @@ function getOutputDirectory(
   );
 }
 
-
 /*
  * ---------------------------------------------------------
  * BUILD PAGE
@@ -404,7 +407,8 @@ function getOutputDirectory(
 function createPageData({
   locale,
   pagePath,
-  body
+  body,
+  meta
 }) {
   const menuPath =
     pagePath === 'home'
@@ -414,9 +418,9 @@ function createPageData({
   const pageHome =
     pagePath === 'home'
       ? homeTemplate({
-        home: home[locale],
-        projects: PROJECTS
-      })
+          home: home[locale],
+          projects: PROJECTS
+        })
       : null;
 
   return {
@@ -430,9 +434,12 @@ function createPageData({
     },
 
     meta: {
-      title: 'ESCA7A — Counter-Strike Developer',
+      title:
+        meta?.title ??
+        'ESCA7A — Counter-Strike Developer',
 
       description:
+        meta?.description ??
         'ESCA7A — developer of Counter-Strike and FACEIT tools.'
     },
 
@@ -463,11 +470,15 @@ function createPageData({
 function buildPage({
   indexPath,
   locale,
-  sourceRoot
+  sourceRoot,
+  body,
+  meta
 }) {
-  const source = readFile(indexPath);
+  if (body === undefined) {
+    const source = readFile(indexPath);
 
-  const body = extractBody(source);
+    body = extractBody(source);
+  }
 
   const pagePath = getPagePath(
     indexPath,
@@ -477,7 +488,8 @@ function buildPage({
   const data = createPageData({
     locale,
     pagePath,
-    body
+    body,
+    meta
   });
 
   const html = baseTemplate(data);
@@ -582,8 +594,16 @@ function build() {
   pageCount += buildSource(PAGES_DIR);
   pageCount += buildSource(PROJECTS_DIR);
 
-  console.log(`Built ${pageCount} page(s).`);
+  const markdownCount = buildMarkdown({
+  sourceRoot: PUBLICATIONS_DIR,
+  buildPage
+  });
+
+  pageCount += markdownCount;
+
+  console.log(
+    `Built ${pageCount} page(s).`
+  );
 }
 
 build();
-
