@@ -131,7 +131,7 @@ function discoverPublications(
           publication.data.featured === true,
 
         url:
-          `${slug}/${publication.locale}/`
+          `${siteBasePath}publications/${slug}/${publication.locale}/`
       });
     }
 
@@ -166,7 +166,8 @@ function getPublicationLocale(
 
 function createPublicationList(
   publications,
-  locale
+  locale,
+  siteBasePath
 ) {
   return publications
     .map(publication =>
@@ -177,7 +178,10 @@ function createPublicationList(
     )
     .filter(Boolean)
     .map(publication => ({
-      ...publication
+      ...publication,
+
+      url:
+        `${siteBasePath}publications/${publication.url}`
     }));
 }
 
@@ -207,7 +211,8 @@ export function buildPublicationIndex({
     const items =
       createPublicationList(
         publications,
-        locale
+        locale,
+        siteBasePath
       );
 
     const body =
